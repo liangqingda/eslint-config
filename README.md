@@ -6,3 +6,4 @@
 
 - [配置介绍](./docs/intruduce.md)
 - [使用方式](./docs/how-use.md)
+- [VS Code 配置](./docs/vscode.md)
