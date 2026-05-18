@@ -9,7 +9,6 @@ module.exports = {
     "plugin:import/errors",
     "plugin:import/typescript",
     "prettier",
-    "plugin:prettier/recommended",
   ],
   globals: {
     Atomics: "readonly",
@@ -20,7 +19,7 @@ module.exports = {
     ecmaVersion: 2020,
     sourceType: "module",
   },
-  plugins: ["@typescript-eslint", "prettier", "import", "no-secrets"],
+  plugins: ["@typescript-eslint", "import", "no-secrets"],
   rules: {
     'no-secrets/no-secrets': ['error', { tolerance: 5 }],
     'no-else-return': ['error', { allowElseIf: false }],
@@ -176,7 +175,6 @@ module.exports = {
     "import/export": "error",
     "import/no-mutable-exports": "error",
     "prefer-destructuring": "error",
-    "prettier/prettier": "error",
     "no-restricted-imports": ["error", { paths: ["console"] }],
     // do not use global vars (such as 'status')
     "no-restricted-globals": [
