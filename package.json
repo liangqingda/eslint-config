@@ -5,6 +5,8 @@
   "exports": {
     ".": "./index.js",
     "./typed": "./typed.js",
+    "./node": "./node.js",
+    "./node-typed": "./node-typed.js",
     "./react": "./react.js",
     "./react-typed": "./react-typed.js",
     "./prettier.json": "./prettier.json",
@@ -16,6 +18,8 @@
   "files": [
     "configs.js",
     "index.js",
+    "node.js",
+    "node-typed.js",
     "prettier.json",
     "react.js",
     "react-typed.js",
@@ -31,7 +35,8 @@
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-no-secrets": "^2.3.3",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^7.1.1"
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^14.0.0"
   },
   "peerDependencies": {
     "eslint": "^9.39.4",

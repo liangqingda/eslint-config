@@ -1,6 +1,6 @@
 # 配置介绍
 
-这个包当前提供了 4 套 ESLint Flat Config 和 1 份共享 Prettier 配置，分别覆盖基础 JavaScript / TypeScript、需要类型信息的 TypeScript、React，以及 React + TypeScript 类型检查场景。
+这个包当前提供了 6 套 ESLint Flat Config 和 1 份共享 Prettier 配置，分别覆盖基础 JavaScript / TypeScript、需要类型信息的 TypeScript、Node.js ESM、Node.js + TypeScript + ESM、React，以及 React + TypeScript 类型检查场景。
 
 ## 一览
 
@@ -8,6 +8,8 @@
 | --- | --- | --- |
 | `@liangqingda/eslint-config` | JavaScript 项目，或不想启用类型感知规则的 TypeScript 项目 | 基础规则集合，限制较完整 |
 | `@liangqingda/eslint-config/typed` | 需要 TypeScript 类型检查规则的项目 | 在基础配置上开启依赖类型信息的规则 |
+| `@liangqingda/eslint-config/node` | Node.js + JavaScript + ESM 项目 | 在基础配置上补充 Node.js ESM globals |
+| `@liangqingda/eslint-config/node-typed` | Node.js + TypeScript + ESM 项目 | 组合了 Node 运行时环境和 Typed 规则 |
 | `@liangqingda/eslint-config/react` | React 项目 | 在基础配置上增加 React / JSX 规则 |
 | `@liangqingda/eslint-config/react-typed` | React + TypeScript 项目，且希望启用类型感知规则 | 组合了 React 规则和 Typed 规则 |
 | `@liangqingda/eslint-config/prettier.json` | 所有需要统一格式化配置的项目 | 共享的 Prettier 配置 |
@@ -136,19 +138,40 @@ parserOptions: {
 
 另外还显式关闭了原生 `no-throw-literal`，交给 `@typescript-eslint/only-throw-error` 统一处理。
 
-### 这套配置适合什么时候用
+## 3. Node 配置 `@liangqingda/eslint-config/node`
 
-- 你希望 `if` 条件、断言、`switch` 分支的类型问题尽早暴露
-- 你能接受 lint 速度比基础配置稍慢
-- 项目已经具备较完整的 TS 配置
+入口文件是 [`node.js`](/Users/lqd/projects/eslint-config/node.js)，实际内容来自 `nodeConfig`。
 
-### 使用它时要注意
+这套配置是在基础配置之上补充了适用于 Node.js ESM 运行时的环境：
 
-- 项目中需要存在可识别的 `tsconfig.json`
-- 如果是 monorepo，需要保证 ESLint 能正确找到对应 TS 工程
-- 首次接入旧项目时，类型相关告警通常会比基础配置多很多
+- `languageOptions.sourceType = "module"`
+- 内置 `globals.nodeBuiltin`
 
-## 3. React 配置 `@liangqingda/eslint-config/react`
+因此更适合：
+
+- Node.js + JavaScript + ESM 项目
+- 直接使用 `process`、`Buffer`、`console` 等 Node 运行时全局变量的后端项目
+
+这套配置没有加入 CommonJS 风格的 `require`、`module`、`__dirname`、`__filename` 全局，因此更贴近当前仓库面向的 ESM 使用方式。
+
+## 4. Node Typed 配置 `@liangqingda/eslint-config/node-typed`
+
+入口文件是 [`node-typed.js`](/Users/lqd/projects/eslint-config/node-typed.js)，实际内容来自 `nodeTypedConfig`。
+
+它本质上是下面两者的组合：
+
+- Node 配置
+- Typed 配置
+
+也就是说，这套配置同时具备：
+
+- 基础 JavaScript / TypeScript 规则
+- Node.js ESM 运行时 globals
+- 依赖类型信息的 TypeScript 规则
+
+如果你的项目是 Node.js + TypeScript，并且希望把类型相关问题直接纳入 ESLint，这是后端项目里最完整的一套配置。
+
+## 5. React 配置 `@liangqingda/eslint-config/react`
 
 入口文件是 [`react.js`](/Users/lqd/projects/eslint-config/react.js)，实际内容来自 `reactConfig`。
 
@@ -170,7 +193,7 @@ settings: {
 
 也就是会自动识别项目安装的 React 版本。
 
-### 3.1 React 规则增强
+### 5.1 React 规则增强
 
 React 配置中增加或强化了下面这些规则：
 
@@ -193,7 +216,7 @@ React 配置中增加或强化了下面这些规则：
 - `react/react-in-jsx-scope: off`
 - `react/display-name: off`
 
-### 3.2 React 项目的额外约束
+### 5.2 React 项目的额外约束
 
 除了 React 插件本身，这套配置还追加了一些偏 React 场景的约束：
 
@@ -206,16 +229,14 @@ React 配置中增加或强化了下面这些规则：
 - `*.less`、`*.css`、`*.scss` 会被视为相对导入，并排在后面
 - `@/**` 仍然被视为内部模块
 
-### 3.3 JSX 中的特殊限制
+### 5.3 JSX 中的特殊限制
 
 React 配置还扩展了 `no-restricted-syntax`，新增了一条针对 `<img>` 的限制：
 
 - 不允许在 `<img src={...}>` 里直接写字面量或复杂表达式
 - 更推荐先 `import` 资源，再把变量传给 `src`
 
-这条规则的目的，是让静态资源引用方式更统一，也更利于构建工具处理。
-
-## 4. React + 类型检查配置 `@liangqingda/eslint-config/react-typed`
+## 6. React Typed 配置 `@liangqingda/eslint-config/react-typed`
 
 入口文件是 [`react-typed.js`](/Users/lqd/projects/eslint-config/react-typed.js)，实际内容来自 `reactTypedConfig`。
 
@@ -230,9 +251,7 @@ React 配置还扩展了 `no-restricted-syntax`，新增了一条针对 `<img>` 
 - React / Hooks / JSX 规则
 - 依赖类型信息的 TypeScript 规则
 
-如果你的项目是 React + TypeScript，并且希望把类型相关问题直接纳入 ESLint，这是最完整的一套配置。
-
-## 5. Prettier 配置 `@liangqingda/eslint-config/prettier.json`
+## 7. Prettier 配置 `@liangqingda/eslint-config/prettier.json`
 
 共享配置文件是 [`prettier.json`](/Users/lqd/projects/eslint-config/prettier.json)。
 
@@ -248,61 +267,14 @@ React 配置还扩展了 `no-restricted-syntax`，新增了一条针对 `<img>` 
 
 - 当文件名是 `.prettierrc` 时，强制按 `json` 解析
 
-这份 Prettier 配置主要负责格式化风格统一，而 ESLint 里通过 `eslint-config-prettier` 避免了和格式规则的直接冲突。
-
-## 6. 该怎么选
+## 8. 该怎么选
 
 可以按下面的方式选择：
 
 - 纯 JavaScript 项目：使用 `@liangqingda/eslint-config`
 - TypeScript 项目，但暂时不想启用类型感知 lint：使用 `@liangqingda/eslint-config`
 - TypeScript 项目，需要更严格的类型规则：使用 `@liangqingda/eslint-config/typed`
-- React 项目：使用 `@liangqingda/eslint-config/react`
-- React + TypeScript 项目，且希望检查类型相关问题：使用 `@liangqingda/eslint-config/react-typed`
-
-## 7. 使用示例
-
-### 基础配置
-
-```js
-const config = require('@liangqingda/eslint-config');
-
-module.exports = [...config];
-```
-
-### 类型检查配置
-
-```js
-const config = require('@liangqingda/eslint-config/typed');
-
-module.exports = [...config];
-```
-
-### React 配置
-
-```js
-const config = require('@liangqingda/eslint-config/react');
-
-module.exports = [...config];
-```
-
-### React + TypeScript 配置
-
-```js
-const config = require('@liangqingda/eslint-config/react-typed');
-
-module.exports = [...config];
-```
-
-### Prettier 配置
-
-```js
-module.exports = require('@liangqingda/eslint-config/prettier.json');
-```
-
-## 8. 补充说明
-
-- 这些导出全部是 ESLint Flat Config，不是传统 `.eslintrc` 的 `extends` 形式。
-- `typed` 和 `react-typed` 之所以单独拆分，是因为它们依赖 TypeScript 的类型服务，不适合默认对所有项目开启。
-- 这套配置整体风格偏严格，尤其对导入顺序、不可变写法、React JSX 书写方式约束较多。
-- 如果项目是旧代码仓库，建议先从基础配置或 React 配置接入，再逐步升级到 `typed` 或 `react-typed`。
+- Node.js + JavaScript + ESM 项目：使用 `@liangqingda/eslint-config/node`
+- Node.js + TypeScript + ESM 项目：使用 `@liangqingda/eslint-config/node-typed`
+- React + JavaScript 项目：使用 `@liangqingda/eslint-config/react`
+- React + TypeScript 项目，需要类型感知规则：使用 `@liangqingda/eslint-config/react-typed`

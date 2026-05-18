@@ -5,6 +5,7 @@ const reactPlugin = require("eslint-plugin-react");
 const reactHooksPlugin = require("eslint-plugin-react-hooks");
 const noSecretsPlugin = require("eslint-plugin-no-secrets");
 const prettierConfig = require("eslint-config-prettier");
+const globals = require("globals");
 
 const importExtensions = [
   ".ts",
@@ -306,6 +307,34 @@ const typedConfig = [
 ];
 
 /** @type {import('eslint').Linter.Config[]} */
+const nodeConfig = [
+  ...baseConfig,
+  {
+    name: "@liangqingda/eslint-config/node",
+    languageOptions: {
+      sourceType: "module",
+      globals: {
+        ...globals.nodeBuiltin,
+      },
+    },
+  },
+];
+
+/** @type {import('eslint').Linter.Config[]} */
+const nodeTypedConfig = [
+  ...nodeConfig,
+  {
+    name: "@liangqingda/eslint-config/node-typed",
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+      },
+    },
+    rules: typedRules,
+  },
+];
+
+/** @type {import('eslint').Linter.Config[]} */
 const reactConfig = [
   ...baseConfig,
   reactPlugin.configs.flat.recommended,
@@ -340,6 +369,8 @@ const reactTypedConfig = [
 module.exports = {
   baseConfig,
   typedConfig,
+  nodeConfig,
+  nodeTypedConfig,
   reactConfig,
   reactTypedConfig,
 };
