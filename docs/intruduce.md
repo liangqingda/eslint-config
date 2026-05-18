@@ -1,0 +1,308 @@
+# 配置介绍
+
+这个包当前提供了 4 套 ESLint Flat Config 和 1 份共享 Prettier 配置，分别覆盖基础 JavaScript / TypeScript、需要类型信息的 TypeScript、React，以及 React + TypeScript 类型检查场景。
+
+## 一览
+
+| 导出路径 | 适用场景 | 特点 |
+| --- | --- | --- |
+| `@liangqingda/eslint-config` | JavaScript 项目，或不想启用类型感知规则的 TypeScript 项目 | 基础规则集合，限制较完整 |
+| `@liangqingda/eslint-config/typed` | 需要 TypeScript 类型检查规则的项目 | 在基础配置上开启依赖类型信息的规则 |
+| `@liangqingda/eslint-config/react` | React 项目 | 在基础配置上增加 React / JSX 规则 |
+| `@liangqingda/eslint-config/react-typed` | React + TypeScript 项目，且希望启用类型感知规则 | 组合了 React 规则和 Typed 规则 |
+| `@liangqingda/eslint-config/prettier.json` | 所有需要统一格式化配置的项目 | 共享的 Prettier 配置 |
+
+## 1. 基础配置 `@liangqingda/eslint-config`
+
+入口文件是 [`index.js`](/Users/lqd/projects/eslint-config/index.js)，实际内容来自 [`configs.js`](/Users/lqd/projects/eslint-config/configs.js) 里的 `baseConfig`。
+
+这套配置适合作为默认起点，主要由 4 部分组成：
+
+1. `@eslint/js` 的 `recommended`
+2. `@typescript-eslint` 的 `flat/recommended`
+3. `eslint-plugin-import` 的 `recommended`
+4. `eslint-config-prettier`
+
+在这些官方推荐配置之外，这个仓库还补充了大量自定义规则，重点包括下面几类。
+
+### 1.1 安全与风险控制
+
+- 启用了 `no-secrets/no-secrets`，会对疑似密钥、token、密码等内容报错。
+- 禁止 `import/no-dynamic-require`，避免动态 `require`。
+- 启用了 `import/no-cycle`，减少循环依赖问题。
+- 启用了 `import/no-mutable-exports`，避免可变导出。
+
+### 1.2 基础代码风格
+
+- 强制分号：`semi: ["error", "always"]`
+- 强制单引号：`quotes: ["error", "single"]`
+- 强制使用严格相等：`eqeqeq`
+- 强制使用花括号：`curly`
+- 限制多余空行：`no-multiple-empty-lines`
+- 强制对象花括号空格：`object-curly-spacing`
+- 强制关键字和运算符空格：`keyword-spacing`、`space-infix-ops`
+- 禁止尾随空格和多余空格：`no-trailing-spaces`、`no-multi-spaces`
+
+### 1.3 语句结构与可读性
+
+- `no-else-return`：如果前面已经 `return`，不允许再写多余的 `else`
+- `prefer-destructuring`：鼓励解构赋值
+- `prefer-template`：鼓励模板字符串
+- `arrow-body-style`、`prefer-arrow-callback`：偏向箭头函数风格
+- `padding-line-between-statements`：变量声明、导出语句前后必须保留空行
+- `padded-blocks`：代码块内部要求保留空行
+
+### 1.4 对某些语法和写法的限制
+
+- 禁止 `WithStatement`
+- 禁止 `DoWhileStatement`
+- 禁止传统 `ForStatement`
+- 禁止 `ForInStatement`
+- 禁止直接调用 `require(...)`，推荐改用 `import`
+- 禁止调用常见的可变数组方法，如 `push`、`pop`、`splice`、`sort`、`reverse`
+
+这说明这套配置整体偏向：
+
+- 更函数式
+- 更强调不可变数据
+- 更强调统一代码结构
+
+### 1.5 TypeScript 基础规则
+
+即使使用的是基础配置，也已经包含不依赖类型信息的 TypeScript 规则，例如：
+
+- 关闭原生 `no-unused-vars`，改用 `@typescript-eslint/no-unused-vars`
+- 禁止 `any`：`@typescript-eslint/no-explicit-any`
+- 要求重载签名相邻：`@typescript-eslint/adjacent-overload-signatures`
+- 禁止显式写出可推断类型：`@typescript-eslint/no-inferrable-types`
+- 限制方法签名风格：`@typescript-eslint/method-signature-style`
+- 变量命名只能是 `camelCase` 或 `UPPER_CASE`
+
+其中未使用变量规则还做了约定：
+
+- 变量名为 `_` 可忽略
+- 以 `_` 开头的参数可忽略
+
+### 1.6 Import 相关规则
+
+基础配置对导入规范约束比较多：
+
+- `import/first`：`import` 必须放在顶部
+- `import/newline-after-import`：导入后必须空一行
+- `import/order`：按 `builtin`、`external`、`type`、`internal`、相对路径分组
+- `@/**` 会被视为 `internal`
+- 启用了 `import/export`
+- 启用了 `import/no-useless-path-segments`
+
+同时还配置了 TypeScript 友好的 resolver：
+
+- `node` resolver 支持 `.ts`、`.tsx`、`.js`、`.jsx`、`.mjs`、`.cjs`
+- `typescript` resolver 已开启，方便识别 TS 路径和类型导入
+
+### 1.7 全局变量限制
+
+为了减少误用浏览器全局变量，额外禁止直接使用：
+
+- `status`
+- `name`
+- `open`
+
+如果确实需要这些含义，建议定义同名的局部变量替代全局访问。
+
+## 2. 类型检查配置 `@liangqingda/eslint-config/typed`
+
+入口文件是 [`typed.js`](/Users/lqd/projects/eslint-config/typed.js)，实际内容来自 `typedConfig`。
+
+这套配置是在基础配置之上再增加一层类型感知规则，并开启：
+
+```js
+parserOptions: {
+  projectService: true,
+}
+```
+
+这意味着 ESLint 会尝试读取项目的 TypeScript 工程信息，因此更适合：
+
+- 已经有 `tsconfig.json` 的项目
+- 希望在 lint 阶段发现更多潜在类型问题的项目
+
+额外增加的规则包括：
+
+- `@typescript-eslint/no-for-in-array`
+- `@typescript-eslint/no-unnecessary-condition`
+- `@typescript-eslint/no-unnecessary-type-assertion`
+- `@typescript-eslint/only-throw-error`
+- `@typescript-eslint/switch-exhaustiveness-check`
+
+另外还显式关闭了原生 `no-throw-literal`，交给 `@typescript-eslint/only-throw-error` 统一处理。
+
+### 这套配置适合什么时候用
+
+- 你希望 `if` 条件、断言、`switch` 分支的类型问题尽早暴露
+- 你能接受 lint 速度比基础配置稍慢
+- 项目已经具备较完整的 TS 配置
+
+### 使用它时要注意
+
+- 项目中需要存在可识别的 `tsconfig.json`
+- 如果是 monorepo，需要保证 ESLint 能正确找到对应 TS 工程
+- 首次接入旧项目时，类型相关告警通常会比基础配置多很多
+
+## 3. React 配置 `@liangqingda/eslint-config/react`
+
+入口文件是 [`react.js`](/Users/lqd/projects/eslint-config/react.js)，实际内容来自 `reactConfig`。
+
+这套配置在基础配置之上又叠加了：
+
+1. `eslint-plugin-react` 的 `flat.recommended`
+2. `eslint-plugin-react` 的 `flat["jsx-runtime"]`
+3. `eslint-plugin-react-hooks` 的 `recommended`
+
+同时配置了：
+
+```js
+settings: {
+  react: {
+    version: "detect",
+  },
+}
+```
+
+也就是会自动识别项目安装的 React 版本。
+
+### 3.1 React 规则增强
+
+React 配置中增加或强化了下面这些规则：
+
+- `react/self-closing-comp`
+- `react/jsx-wrap-multilines`
+- `react/jsx-pascal-case`
+- `react/jsx-tag-spacing`
+- `react/jsx-sort-props`
+- `react/jsx-boolean-value`
+- `react/no-array-index-key`
+- `react/jsx-no-bind`
+- `react/jsx-curly-brace-presence`
+- `react/destructuring-assignment`
+- `react/no-deprecated`
+
+同时关闭了部分在现代 React 项目里不太需要的规则：
+
+- `react/prop-types: off`
+- `react/jsx-uses-react: off`
+- `react/react-in-jsx-scope: off`
+- `react/display-name: off`
+
+### 3.2 React 项目的额外约束
+
+除了 React 插件本身，这套配置还追加了一些偏 React 场景的约束：
+
+- `max-lines` 限制单文件最多 490 行，注释不计入
+- `arrow-parens` 要求箭头函数参数始终带括号
+- `import/no-duplicates` 开启
+
+导入顺序也做了额外处理：
+
+- `*.less`、`*.css`、`*.scss` 会被视为相对导入，并排在后面
+- `@/**` 仍然被视为内部模块
+
+### 3.3 JSX 中的特殊限制
+
+React 配置还扩展了 `no-restricted-syntax`，新增了一条针对 `<img>` 的限制：
+
+- 不允许在 `<img src={...}>` 里直接写字面量或复杂表达式
+- 更推荐先 `import` 资源，再把变量传给 `src`
+
+这条规则的目的，是让静态资源引用方式更统一，也更利于构建工具处理。
+
+## 4. React + 类型检查配置 `@liangqingda/eslint-config/react-typed`
+
+入口文件是 [`react-typed.js`](/Users/lqd/projects/eslint-config/react-typed.js)，实际内容来自 `reactTypedConfig`。
+
+它本质上是下面两者的组合：
+
+- React 配置
+- Typed 配置
+
+也就是说，这套配置同时具备：
+
+- 基础 JavaScript / TypeScript 规则
+- React / Hooks / JSX 规则
+- 依赖类型信息的 TypeScript 规则
+
+如果你的项目是 React + TypeScript，并且希望把类型相关问题直接纳入 ESLint，这是最完整的一套配置。
+
+## 5. Prettier 配置 `@liangqingda/eslint-config/prettier.json`
+
+共享配置文件是 [`prettier.json`](/Users/lqd/projects/eslint-config/prettier.json)。
+
+当前内容包括：
+
+- `singleQuote: true`
+- `trailingComma: "all"`
+- `printWidth: 100`
+- `semi: true`
+- `tabWidth: 2`
+
+另外还对 `.prettierrc` 做了覆盖：
+
+- 当文件名是 `.prettierrc` 时，强制按 `json` 解析
+
+这份 Prettier 配置主要负责格式化风格统一，而 ESLint 里通过 `eslint-config-prettier` 避免了和格式规则的直接冲突。
+
+## 6. 该怎么选
+
+可以按下面的方式选择：
+
+- 纯 JavaScript 项目：使用 `@liangqingda/eslint-config`
+- TypeScript 项目，但暂时不想启用类型感知 lint：使用 `@liangqingda/eslint-config`
+- TypeScript 项目，需要更严格的类型规则：使用 `@liangqingda/eslint-config/typed`
+- React 项目：使用 `@liangqingda/eslint-config/react`
+- React + TypeScript 项目，且希望检查类型相关问题：使用 `@liangqingda/eslint-config/react-typed`
+
+## 7. 使用示例
+
+### 基础配置
+
+```js
+const config = require('@liangqingda/eslint-config');
+
+module.exports = [...config];
+```
+
+### 类型检查配置
+
+```js
+const config = require('@liangqingda/eslint-config/typed');
+
+module.exports = [...config];
+```
+
+### React 配置
+
+```js
+const config = require('@liangqingda/eslint-config/react');
+
+module.exports = [...config];
+```
+
+### React + TypeScript 配置
+
+```js
+const config = require('@liangqingda/eslint-config/react-typed');
+
+module.exports = [...config];
+```
+
+### Prettier 配置
+
+```js
+module.exports = require('@liangqingda/eslint-config/prettier.json');
+```
+
+## 8. 补充说明
+
+- 这些导出全部是 ESLint Flat Config，不是传统 `.eslintrc` 的 `extends` 形式。
+- `typed` 和 `react-typed` 之所以单独拆分，是因为它们依赖 TypeScript 的类型服务，不适合默认对所有项目开启。
+- 这套配置整体风格偏严格，尤其对导入顺序、不可变写法、React JSX 书写方式约束较多。
+- 如果项目是旧代码仓库，建议先从基础配置或 React 配置接入，再逐步升级到 `typed` 或 `react-typed`。

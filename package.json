@@ -1,25 +1,35 @@
 {
   "name": "@liangqingda/eslint-config",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./typed": "./typed.js",
+    "./react": "./react.js",
+    "./react-typed": "./react-typed.js",
+    "./prettier.json": "./prettier.json",
+    "./package.json": "./package.json"
+  },
   "repository": "git@github.com:liangqingda/eslint-config.git",
   "author": "Qingda Liang",
   "license": "UNLICENSED",
   "files": [
+    "configs.js",
     "index.js",
     "prettier.json",
-    "react.js"
+    "react.js",
+    "react-typed.js",
+    "typed.js"
   ],
   "private": false,
   "dependencies": {
+    "@eslint/js": "^9.39.4",
     "@typescript-eslint/eslint-plugin": "^8.59.3",
     "@typescript-eslint/parser": "^8.59.3",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-n": "^18.0.1",
     "eslint-plugin-no-secrets": "^2.3.3",
-    "eslint-plugin-promise": "^7.3.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1"
   },
