@@ -1,5 +1,4 @@
 const js = require('@eslint/js');
-const stylisticPlugin = require('@stylistic/eslint-plugin');
 const tsEslint = require('@typescript-eslint/eslint-plugin');
 const importPlugin = require('eslint-plugin-import');
 const reactPlugin = require('eslint-plugin-react');
@@ -127,7 +126,6 @@ const baseRules = {
   'space-infix-ops': 'error',
   'space-in-parens': 'error',
   'space-before-blocks': 'error',
-  '@stylistic/newline-per-chained-call': ['error', { ignoreChainWithDepth: 1 }],
   // Tenary
   'no-unneeded-ternary': 'error',
   'no-nested-ternary': 'error',
@@ -276,7 +274,6 @@ const baseConfig = [
   {
     name: '@liangqingda/eslint-config/base',
     plugins: {
-      '@stylistic': stylisticPlugin,
       'no-secrets': noSecretsPlugin,
     },
     languageOptions: {

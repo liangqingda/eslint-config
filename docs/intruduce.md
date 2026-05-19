@@ -44,7 +44,6 @@
 - 强制对象花括号空格：`object-curly-spacing`
 - 强制关键字和运算符空格：`keyword-spacing`、`space-infix-ops`
 - 禁止尾随空格和多余空格：`no-trailing-spaces`、`no-multi-spaces`
-- 强制链式调用逐段换行：`newline-per-chained-call`
 
 ### 1.3 语句结构与可读性
 
@@ -102,38 +101,6 @@
 
 - `node` resolver 支持 `.ts`、`.tsx`、`.js`、`.jsx`、`.mjs`、`.cjs`
 - `typescript` resolver 已开启，方便识别 TS 路径和类型导入
-
-### 1.6.1 链式调用换行约束
-
-基础配置开启了 `@stylistic/newline-per-chained-call`，并设置：
-
-```js
-['error', { ignoreChainWithDepth: 1 }];
-```
-
-这表示只要出现链式调用，就要求从第二段开始换行。
-
-例如下面这种单行链式调用会报错：
-
-```js
-foo().bar().baz();
-```
-
-推荐写法是：
-
-```js
-foo()
-  .bar()
-  .baz();
-```
-
-这个约束由 ESLint 负责，不依赖 Prettier 单独实现。
-
-兼容性说明：
-
-- 如果使用方继续对同一段代码运行 Prettier，较短的链式调用可能会被重新合并成单行。
-- 当前更适合配合 ESLint `--fix` 使用，或者在使用方工具链里避免让 Prettier 回写这类链式调用。
-- 这条规则当前已经通过 `@stylistic/eslint-plugin` 提供，不再依赖 ESLint Core 已弃用的格式规则。
 
 ### 1.7 全局变量限制
 
@@ -300,8 +267,6 @@ React 配置还扩展了 `no-restricted-syntax`，新增了一条针对 `<img>` 
 另外还对 `.prettierrc` 做了覆盖：
 
 - 当文件名是 `.prettierrc` 时，强制按 `json` 解析
-
-这份 Prettier 配置本身不负责“链式调用始终换行”这类约束。对于 JavaScript / TypeScript 文件，推荐把链式调用、导入顺序这类风格收敛交给 ESLint fix 处理。
 
 ## 8. 该怎么选
 

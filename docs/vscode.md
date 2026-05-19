@@ -44,7 +44,6 @@ module.exports = [...reactTypedConfig];
 
 ```json
 {
-  "editor.formatOnSave": false,
   "eslint.validate": [
     "javascript",
     "javascriptreact",
@@ -60,12 +59,9 @@ module.exports = [...reactTypedConfig];
 
 这几个配置分别表示：
 
-- `editor.formatOnSave: false`：避免保存时再额外触发 formatter，把 ESLint 刚修好的内容改回去
 - `eslint.validate`：告诉 VS Code 这些语言类型要交给 ESLint 检查
 - `eslint.format.enable: false`：避免把 ESLint 当作纯格式化工具，减少和 Prettier 的职责混淆
 - `editor.codeActionsOnSave.source.fixAll.eslint`：保存时执行 ESLint 可自动修复的问题
-
-对于这套配置，推荐把 JavaScript / TypeScript 的风格类修复也交给 ESLint 处理。原因是像“链式调用始终换行”这类规则并不是 Prettier 的配置项，如果保存时又让 Prettier 回写，短链式调用可能会重新被压成单行。
 
 如果你希望保存时自动修复行为更激进，也可以把 `"explicit"` 改成 `true`：
 
@@ -176,9 +172,3 @@ module.exports = [...reactTypedConfig];
 ```
 
 配合项目根目录里的 `eslint.config.js` 使用后，绝大多数 React / TypeScript 项目都能在编码时看到 ESLint 提示。
-
-如果项目里同时安装了 Prettier 扩展，建议额外确认：
-
-- 不要把 JavaScript / TypeScript 的默认 formatter 强制设为 Prettier
-- 保存时优先触发 `source.fixAll.eslint`
-- 需要统一格式时，可以把 Prettier 作为补充工具，而不是覆盖 ESLint fix 结果
