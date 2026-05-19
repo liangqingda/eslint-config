@@ -19,6 +19,38 @@ const importExtensions = [
   '.cjs',
 ];
 
+const baseRestrictedSyntaxEntries = [
+  'WithStatement',
+  'DoWhileStatement',
+  'ForStatement',
+  'ForInStatement',
+  {
+    selector: "CallExpression[callee.name='require']",
+    message: 'require is not recommended, use import instead.',
+  },
+  {
+    selector:
+      "CallExpression[callee.type='MemberExpression'] MemberExpression[property.name=/^(copyWithin|fill|pop|push|reverse|shift|sort|splice|unshift)$/]",
+    message: 'DO NOT CALL MUTATING FUNCTION, THANKS.',
+  },
+];
+
+const reactRestrictedSyntaxEntries = [
+  ...baseRestrictedSyntaxEntries,
+  {
+    selector:
+      "JSXOpeningElement[name.name='img'] JSXAttribute[name.name='src'][value.expression.type!=/^(Identifier|CallExpression)$/]",
+    message: 'Import the source file first.',
+  },
+];
+
+// 常量目录文件
+const constantsDirectoryFiles = [
+  '**/{constants,consts}/**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}',
+];
+
+const createRestrictedSyntaxRule = (entries) => ['error', ...entries];
+
 const baseSettings = {
   'import/extensions': importExtensions,
   'import/external-module-folders': ['node_modules', 'node_modules/@types'],
@@ -97,22 +129,9 @@ const baseRules = {
   ],
   'no-loop-func': 'error',
   'no-await-in-loop': 'error',
-  'no-restricted-syntax': [
-    'error',
-    'WithStatement',
-    'DoWhileStatement',
-    'ForStatement',
-    'ForInStatement',
-    {
-      selector: "CallExpression[callee.name='require']",
-      message: 'require is not recommended, use import instead.',
-    },
-    {
-      selector:
-        "CallExpression[callee.type='MemberExpression'] MemberExpression[property.name=/^(copyWithin|fill|pop|push|reverse|shift|sort|splice|unshift)$/]",
-      message: 'DO NOT CALL MUTATING FUNCTION, THANKS.',
-    },
-  ],
+  'no-restricted-syntax': createRestrictedSyntaxRule(
+    baseRestrictedSyntaxEntries,
+  ),
   // Spacing
   'object-curly-spacing': ['error', 'always'],
   'key-spacing': [
@@ -278,19 +297,29 @@ const reactRules = {
   'react/jsx-curly-brace-presence': 'error',
   'react/destructuring-assignment': 'error',
   'react/no-deprecated': 'error',
-  'no-restricted-syntax': [
-    'error',
-    ...baseRules['no-restricted-syntax'].slice(1),
-    {
-      selector:
-        "JSXOpeningElement[name.name='img'] JSXAttribute[name.name='src'][value.expression.type!=/^(Identifier|CallExpression)$/]",
-      message: 'Import the source file first.',
-    },
-  ],
+  'no-restricted-syntax': createRestrictedSyntaxRule(
+    reactRestrictedSyntaxEntries,
+  ),
   'react/jsx-uses-react': 'off',
   'react/react-in-jsx-scope': 'off',
   'react/display-name': 'off',
 };
+
+const createConstantsDirectoryConfig = (name, restrictedSyntaxEntries) => ({
+  name,
+  files: constantsDirectoryFiles,
+  rules: {
+    'no-restricted-syntax': createRestrictedSyntaxRule([
+      ...restrictedSyntaxEntries,
+      {
+        selector:
+          "VariableDeclaration[kind='const'] > VariableDeclarator[id.type='Identifier'][id.name!=/^[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*$/][init.type!='ArrowFunctionExpression'][init.type!='FunctionExpression']",
+        message:
+          'Const variables in constants/ or consts/ files must use UPPER_CASE unless the initializer is a function.',
+      },
+    ]),
+  },
+});
 
 /** @type {import('eslint').Linter.Config[]} */
 const baseConfig = [
@@ -313,6 +342,10 @@ const baseConfig = [
     settings: baseSettings,
     rules: baseRules,
   },
+  createConstantsDirectoryConfig(
+    '@liangqingda/eslint-config/base/constants',
+    baseRestrictedSyntaxEntries,
+  ),
 ];
 
 /** @type {import('eslint').Linter.Config[]} */
@@ -377,6 +410,10 @@ const reactConfig = [
     },
     rules: reactRules,
   },
+  createConstantsDirectoryConfig(
+    '@liangqingda/eslint-config/react/constants',
+    reactRestrictedSyntaxEntries,
+  ),
 ];
 
 /** @type {import('eslint').Linter.Config[]} */

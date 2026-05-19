@@ -66,6 +66,7 @@ module.exports = [...reactConfig];
 - 样式文件导入如 `*.css`、`*.less`、`*.scss` 会参与导入顺序校验。
 - JSX 中对 `<img src={...}>` 有额外限制，推荐先 `import` 资源，再传给 `src`。
 - 所有 TypeScript 相关配置都会校验 `enum` 名称必须使用 `PascalCase`，并且以 `Enum` 结尾，例如 `GroupEnum`、`NameEnum`。
+- 任意配置下，只要文件位于 `constants/` 或 `consts/` 目录中，非函数值的 `const` 变量都必须使用全大写下划线命名，例如 `const API_URL = '...'`；`const fn = () => {}`、`function fn() {}`、`let localValue = 1` 不受这条规则影响。
 
 ## Node.js 后端项目
 
@@ -105,6 +106,7 @@ module.exports = [...nodeConfig];
 - 当前没有内置 CommonJS 风格的 `require`、`module`、`__dirname`、`__filename` 全局。
 - `node` 和 `node-typed` 会校验 Node.js 项目里的文件名和目录名都使用中划线命名（`kebab-case`），例如 `api-key.ts`、`user-service/`。
 - 命名规则已兼容常见的中间扩展名写法，例如 `api-key.test.ts`、`user-service.spec.ts` 仍然会按 `api-key`、`user-service` 这一段检查。
+- 如果文件位于 `constants/` 或 `consts/` 目录中，非函数值的 `const` 变量还必须使用全大写下划线命名；这条限制会和 Node 文件名、目录名规则同时生效。
 
 如果你确实希望额外添加自定义 globals，可以在使用方项目里补一层：
 

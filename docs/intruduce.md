@@ -87,6 +87,33 @@
 - 变量名为 `_` 可忽略
 - 以 `_` 开头的参数可忽略
 
+### 1.5.1 `constants/` 与 `consts/` 目录下的常量命名
+
+所有导出配置都会额外约束一类目录内的变量命名：
+
+- 只要文件路径命中 `constants/` 或 `consts/`
+- 且变量是 `const` 声明
+- 且初始化值不是函数声明表达式或箭头函数
+
+那么变量名必须使用全大写下划线风格（`UPPER_CASE`）。
+
+例如：
+
+```js
+const API_URL = 'https://example.com'; // 允许
+const MAX_RETRY_COUNT = 3; // 允许
+
+const apiUrl = 'https://example.com'; // 不允许
+const retryCount = 3; // 不允许
+
+const createClient = () => {}; // 允许
+const fetchData = async function () {}; // 允许
+function formatValue() {} // 允许
+let localValue = 1; // 允许
+```
+
+这条规则的目标是把“常量目录”里的数据型常量命名统一起来，同时保留工厂函数、工具函数等函数型导出的常见写法。
+
 ### 1.6 Import 相关规则
 
 基础配置对导入规范约束比较多：
@@ -162,6 +189,7 @@ parserOptions: {
 - 文件名必须使用中划线形式，例如 `api-key.ts`
 - 目录名必须使用中划线形式，例如 `user-service/`
 - 对 `api-key.test.ts`、`user-service.spec.ts` 这类带中间扩展名的文件，会按主文件名部分继续检查 `kebab-case`
+- 如果文件位于 `constants/` 或 `consts/` 目录中，非函数值的 `const` 变量必须使用 `UPPER_CASE`
 
 ## 4. Node Typed 配置 `@liangqingda/eslint-config/node-typed`
 
@@ -218,6 +246,8 @@ React 配置中增加或强化了下面这些规则：
 - `react/jsx-curly-brace-presence`
 - `react/destructuring-assignment`
 - `react/no-deprecated`
+
+另外，React 配置在基础语法限制之外，额外增加了一条针对 `<img>` 的 `no-restricted-syntax` 限制；而当文件位于 `constants/`、`consts/` 目录时，这两类限制会一起生效：
 
 同时关闭了部分在现代 React 项目里不太需要的规则：
 
