@@ -51,8 +51,8 @@
 - `prefer-destructuring`：鼓励解构赋值
 - `prefer-template`：鼓励模板字符串
 - `arrow-body-style`、`prefer-arrow-callback`：偏向箭头函数风格
-- `padding-line-between-statements`：变量声明、导出语句前后必须保留空行
-- `padded-blocks`：代码块内部要求保留空行
+- `padding-line-between-statements`：变量声明、导出语句，以及 `if` / `function` / `for` / `const fn = () => {}` 这类 block-like 语句前后必须保留空行
+- `padded-blocks`：关闭代码块内部强制空行，改为只约束块外空行
 
 ### 1.4 对某些语法和写法的限制
 
@@ -79,6 +79,7 @@
 - 禁止显式写出可推断类型：`@typescript-eslint/no-inferrable-types`
 - 限制方法签名风格：`@typescript-eslint/method-signature-style`
 - 变量命名只能是 `camelCase` 或 `UPPER_CASE`
+- React 配置下，组件风格的变量名允许使用 `PascalCase`
 
 其中未使用变量规则还做了约定：
 
