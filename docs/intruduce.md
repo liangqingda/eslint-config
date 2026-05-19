@@ -4,6 +4,8 @@
 
 另外，所有对外导出的 JS 入口文件都会在第一行添加用途注释，方便在仓库内直接打开文件时快速识别该入口对应的配置场景。
 
+为了区分公共入口和内部实现，这些给外部使用的入口文件现在统一放在 [`exports/`](/Users/lqd/projects/eslint-config/exports) 目录中；包的导出路径本身没有变化。
+
 ## 一览
 
 | 导出路径 | 适用场景 | 特点 |
@@ -18,7 +20,7 @@
 
 ## 1. 基础配置 `@liangqingda/eslint-config`
 
-入口文件是 [`index.js`](/Users/lqd/projects/eslint-config/index.js)，实际内容来自 [`configs.js`](/Users/lqd/projects/eslint-config/configs.js) 里的 `baseConfig`。
+入口文件是 [`exports/index.js`](/Users/lqd/projects/eslint-config/exports/index.js)，它会读取聚合层 [`configs.js`](/Users/lqd/projects/eslint-config/configs.js)；基础配置的实际实现位于 [`config/base.js`](/Users/lqd/projects/eslint-config/config/base.js) 里的 `baseConfig`。
 
 这套配置适合作为默认起点，主要由 4 部分组成：
 
@@ -142,7 +144,7 @@ let localValue = 1; // 允许
 
 ## 2. 类型检查配置 `@liangqingda/eslint-config/typed`
 
-入口文件是 [`typed.js`](/Users/lqd/projects/eslint-config/typed.js)，实际内容来自 `typedConfig`。
+入口文件是 [`exports/typed.js`](/Users/lqd/projects/eslint-config/exports/typed.js)，它会读取聚合层 `configs.js`；`typedConfig` 的实际实现位于 [`config/typed.js`](/Users/lqd/projects/eslint-config/config/typed.js)。
 
 这套配置是在基础配置之上再增加一层类型感知规则，并开启：
 
@@ -169,7 +171,7 @@ parserOptions: {
 
 ## 3. Node 配置 `@liangqingda/eslint-config/node`
 
-入口文件是 [`node.js`](/Users/lqd/projects/eslint-config/node.js)，实际内容来自 `nodeConfig`。
+入口文件是 [`exports/node.js`](/Users/lqd/projects/eslint-config/exports/node.js)，它会读取聚合层 `configs.js`；`nodeConfig` 的实际实现位于 [`config/node.js`](/Users/lqd/projects/eslint-config/config/node.js)。
 
 这套配置是在基础配置之上补充了适用于 Node.js ESM 运行时的环境：
 
@@ -193,7 +195,7 @@ parserOptions: {
 
 ## 4. Node Typed 配置 `@liangqingda/eslint-config/node-typed`
 
-入口文件是 [`node-typed.js`](/Users/lqd/projects/eslint-config/node-typed.js)，实际内容来自 `nodeTypedConfig`。
+入口文件是 [`exports/node-typed.js`](/Users/lqd/projects/eslint-config/exports/node-typed.js)，它会读取聚合层 `configs.js`；`nodeTypedConfig` 的实际实现位于 [`config/node.js`](/Users/lqd/projects/eslint-config/config/node.js)。
 
 它本质上是下面两者的组合：
 
@@ -211,7 +213,7 @@ parserOptions: {
 
 ## 5. React 配置 `@liangqingda/eslint-config/react`
 
-入口文件是 [`react.js`](/Users/lqd/projects/eslint-config/react.js)，实际内容来自 `reactConfig`。
+入口文件是 [`exports/react.js`](/Users/lqd/projects/eslint-config/exports/react.js)，它会读取聚合层 `configs.js`；`reactConfig` 的实际实现位于 [`config/react.js`](/Users/lqd/projects/eslint-config/config/react.js)。
 
 这套配置在基础配置之上又叠加了：
 
@@ -263,6 +265,14 @@ React 配置中增加或强化了下面这些规则：
 - `max-lines` 限制单文件最多 490 行，注释不计入
 - `arrow-parens` 要求箭头函数参数始终带括号
 - `import/no-duplicates` 开启
+- React 项目命名规则会按目录语义区分：
+  - 所有目录默认使用中划线命名（`kebab-case`）
+  - 所有非 `tsx` 文件默认使用中划线命名（`kebab-case`）
+  - 文件名以 `use` 开头时视为 Hooks 文件，必须以 `use` 开头并使用小驼峰命名（`camelCase`）
+  - 位于 `hooks/` 目录中的文件也按 Hooks 文件处理，因此同样必须以 `use` 开头
+  - `pages/`、`components/`、`layouts/` 目录树中的业务目录默认必须使用大驼峰命名（`PascalCase`）
+  - 但这些目录树下的子 `components/` 目录及其后代目录，会恢复为中划线命名（`kebab-case`）
+  - `pages/`、`components/`、`layouts/` 目录树中的 `tsx` 文件，除 `index.tsx` 外必须使用大驼峰命名（`PascalCase`）
 
 导入顺序也做了额外处理：
 
@@ -278,7 +288,7 @@ React 配置还扩展了 `no-restricted-syntax`，新增了一条针对 `<img>` 
 
 ## 6. React Typed 配置 `@liangqingda/eslint-config/react-typed`
 
-入口文件是 [`react-typed.js`](/Users/lqd/projects/eslint-config/react-typed.js)，实际内容来自 `reactTypedConfig`。
+入口文件是 [`exports/react-typed.js`](/Users/lqd/projects/eslint-config/exports/react-typed.js)，它会读取聚合层 `configs.js`；`reactTypedConfig` 的实际实现位于 [`config/react.js`](/Users/lqd/projects/eslint-config/config/react.js)。
 
 它本质上是下面两者的组合：
 
@@ -293,7 +303,7 @@ React 配置还扩展了 `no-restricted-syntax`，新增了一条针对 `<img>` 
 
 ## 7. Prettier 配置 `@liangqingda/eslint-config/prettier.json`
 
-共享配置文件是 [`prettier.json`](/Users/lqd/projects/eslint-config/prettier.json)。
+共享配置文件的实际入口是 [`exports/prettier.js`](/Users/lqd/projects/eslint-config/exports/prettier.js)，但对外导出路径仍然是 `@liangqingda/eslint-config/prettier.json`。
 
 当前内容包括：
 

@@ -2,6 +2,8 @@
 
 这份文档专门说明这套公共 ESLint 配置在 React 项目和 Node.js 后端项目里的接入方式。
 
+仓库实现上，所有给外部使用的入口文件都集中放在 [`exports/`](/Users/lqd/projects/eslint-config/exports) 目录中，内部配置实现则拆分在 [`config/`](/Users/lqd/projects/eslint-config/config) 目录下；不过包的导出路径保持不变，仍然按下面这些路径使用即可。
+
 当前包导出了 6 套 Flat Config 和 1 份共享 Prettier 配置：
 
 | 导出路径 | 适用场景 |
@@ -65,6 +67,15 @@ module.exports = [...reactConfig];
 - React 版本使用 `detect` 自动识别，不需要手动指定版本。
 - 样式文件导入如 `*.css`、`*.less`、`*.scss` 会参与导入顺序校验。
 - JSX 中对 `<img src={...}>` 有额外限制，推荐先 `import` 资源，再传给 `src`。
+- `react` 和 `react-typed` 额外约束了 React 项目里的命名方式：
+  - 所有目录默认都使用中划线命名（`kebab-case`）。
+  - 所有非 `tsx` 文件默认都使用中划线命名（`kebab-case`）。
+  - 只要文件名以 `use` 开头，就会按 Hooks 文件处理，必须以 `use` 开头并使用小驼峰命名（`camelCase`），例如 `useStore.ts`、`useStore.tsx`。
+  - 只要文件位于 `hooks/` 目录中，也会按 Hooks 文件处理，因此不能写成 `store.ts`、`user-store.ts`，而必须写成 `useStore.ts` 这类形式。
+  - 当文件位于 `pages/`、`components/`、`layouts/` 目录树内时，除子 `components/` 目录及其后代目录外，目录名必须使用大驼峰命名（`PascalCase`）。
+  - 当文件位于 `pages/`、`components/`、`layouts/` 目录树内时，除 `index.tsx` 外，其他 `tsx` 文件必须使用大驼峰命名（`PascalCase`）。
+  - 子 `components/` 目录本身以及它下面的目录会恢复为中划线命名，但其中的 `tsx` 组件文件仍然继续要求使用大驼峰命名。
+  - 例如 `src/pages/Home/components/user-card/CardItem.tsx`、`src/hooks/useStore.ts`、`src/utils/user-service.ts` 都是合法命名。
 - 所有 TypeScript 相关配置都会校验 `enum` 名称必须使用 `PascalCase`，并且以 `Enum` 结尾，例如 `GroupEnum`、`NameEnum`。
 - 任意配置下，只要文件位于 `constants/` 或 `consts/` 目录中，非函数值的 `const` 变量都必须使用全大写下划线命名，例如 `const API_URL = '...'`；`const fn = () => {}`、`function fn() {}`、`let localValue = 1` 不受这条规则影响。
 
