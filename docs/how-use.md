@@ -65,6 +65,7 @@ module.exports = [...reactConfig];
 - React 版本使用 `detect` 自动识别，不需要手动指定版本。
 - 样式文件导入如 `*.css`、`*.less`、`*.scss` 会参与导入顺序校验。
 - JSX 中对 `<img src={...}>` 有额外限制，推荐先 `import` 资源，再传给 `src`。
+- 所有 TypeScript 相关配置都会校验 `enum` 名称必须使用 `PascalCase`，并且以 `Enum` 结尾，例如 `GroupEnum`、`NameEnum`。
 
 ## Node.js 后端项目
 
@@ -102,6 +103,8 @@ module.exports = [...nodeConfig];
 - 这套公共配置默认不推荐 `require(...)`，更推荐使用 `import`。
 - `node` 和 `node-typed` 已经内置了 Node.js ESM 环境下常用的 globals，所以大多数后端项目不需要再手动补 `process`、`Buffer`、`console`。
 - 当前没有内置 CommonJS 风格的 `require`、`module`、`__dirname`、`__filename` 全局。
+- `node` 和 `node-typed` 会校验 Node.js 项目里的文件名和目录名都使用中划线命名（`kebab-case`），例如 `api-key.ts`、`user-service/`。
+- 命名规则已兼容常见的中间扩展名写法，例如 `api-key.test.ts`、`user-service.spec.ts` 仍然会按 `api-key`、`user-service` 这一段检查。
 
 如果你确实希望额外添加自定义 globals，可以在使用方项目里补一层：
 

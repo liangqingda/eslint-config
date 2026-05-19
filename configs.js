@@ -1,5 +1,6 @@
 const js = require('@eslint/js');
 const tsEslint = require('@typescript-eslint/eslint-plugin');
+const checkFilePlugin = require('eslint-plugin-check-file');
 const importPlugin = require('eslint-plugin-import');
 const reactPlugin = require('eslint-plugin-react');
 const reactHooksPlugin = require('eslint-plugin-react-hooks');
@@ -144,6 +145,14 @@ const baseRules = {
       argsIgnorePattern: '^_',
     },
   ],
+  '@typescript-eslint/naming-convention': [
+    'error',
+    {
+      selector: 'enum',
+      format: ['PascalCase'],
+      suffix: ['Enum'],
+    },
+  ],
   '@typescript-eslint/no-explicit-any': 'error',
   '@typescript-eslint/adjacent-overload-signatures': 'error',
   '@typescript-eslint/no-inferrable-types': 'error',
@@ -202,6 +211,24 @@ const typedRules = {
   '@typescript-eslint/no-unnecessary-type-assertion': 'error',
   '@typescript-eslint/only-throw-error': 'error',
   '@typescript-eslint/switch-exhaustiveness-check': 'error',
+};
+
+const nodeNamingRules = {
+  'check-file/filename-naming-convention': [
+    'error',
+    {
+      '**/*.{js,ts,mjs,cjs,mts,cts}': 'KEBAB_CASE',
+    },
+    {
+      ignoreMiddleExtensions: true,
+    },
+  ],
+  'check-file/folder-naming-convention': [
+    'error',
+    {
+      '**/*/': 'KEBAB_CASE',
+    },
+  ],
 };
 
 const reactRules = {
@@ -307,12 +334,16 @@ const nodeConfig = [
   ...baseConfig,
   {
     name: '@liangqingda/eslint-config/node',
+    plugins: {
+      'check-file': checkFilePlugin,
+    },
     languageOptions: {
       sourceType: 'module',
       globals: {
         ...globals.nodeBuiltin,
       },
     },
+    rules: nodeNamingRules,
   },
 ];
 

@@ -2,6 +2,8 @@
 
 这个包当前提供了 6 套 ESLint Flat Config 和 1 份共享 Prettier 配置，分别覆盖基础 JavaScript / TypeScript、需要类型信息的 TypeScript、Node.js ESM、Node.js + TypeScript + ESM、React，以及 React + TypeScript 类型检查场景。
 
+另外，所有对外导出的 JS 入口文件都会在第一行添加用途注释，方便在仓库内直接打开文件时快速识别该入口对应的配置场景。
+
 ## 一览
 
 | 导出路径 | 适用场景 | 特点 |
@@ -74,12 +76,11 @@
 即使使用的是基础配置，也已经包含不依赖类型信息的 TypeScript 规则，例如：
 
 - 关闭原生 `no-unused-vars`，改用 `@typescript-eslint/no-unused-vars`
+- 限制枚举命名必须使用大驼峰，并以 `Enum` 结尾，例如 `GroupEnum`
 - 禁止 `any`：`@typescript-eslint/no-explicit-any`
 - 要求重载签名相邻：`@typescript-eslint/adjacent-overload-signatures`
 - 禁止显式写出可推断类型：`@typescript-eslint/no-inferrable-types`
 - 限制方法签名风格：`@typescript-eslint/method-signature-style`
-- 变量命名只能是 `camelCase` 或 `UPPER_CASE`
-- React 配置下，组件风格的变量名允许使用 `PascalCase`
 
 其中未使用变量规则还做了约定：
 
@@ -147,6 +148,7 @@ parserOptions: {
 
 - `languageOptions.sourceType = "module"`
 - 内置 `globals.nodeBuiltin`
+- 通过 `eslint-plugin-check-file` 强制文件名和目录名使用 `kebab-case`
 
 因此更适合：
 
@@ -154,6 +156,12 @@ parserOptions: {
 - 直接使用 `process`、`Buffer`、`console` 等 Node 运行时全局变量的后端项目
 
 这套配置没有加入 CommonJS 风格的 `require`、`module`、`__dirname`、`__filename` 全局，因此更贴近当前仓库面向的 ESM 使用方式。
+
+除此之外，Node 配置还会额外约束命名风格：
+
+- 文件名必须使用中划线形式，例如 `api-key.ts`
+- 目录名必须使用中划线形式，例如 `user-service/`
+- 对 `api-key.test.ts`、`user-service.spec.ts` 这类带中间扩展名的文件，会按主文件名部分继续检查 `kebab-case`
 
 ## 4. Node Typed 配置 `@liangqingda/eslint-config/node-typed`
 
@@ -169,6 +177,7 @@ parserOptions: {
 - 基础 JavaScript / TypeScript 规则
 - Node.js ESM 运行时 globals
 - 依赖类型信息的 TypeScript 规则
+- 文件名和目录名的中划线命名约束
 
 如果你的项目是 Node.js + TypeScript，并且希望把类型相关问题直接纳入 ESLint，这是后端项目里最完整的一套配置。
 
