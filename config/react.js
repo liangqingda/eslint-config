@@ -12,6 +12,14 @@ const {
 const { baseConfig } = require('./base');
 
 const reactPascalCaseDirectoryRoots = new Set(['pages', 'components', 'layouts']);
+const reactRelaxedDirectoryNames = new Set([
+  'components',
+  'utils',
+  'types',
+  'hooks',
+  'constants',
+  'consts',
+]);
 const supportedScriptExtensions = new Set([
   '.ts',
   '.cts',
@@ -202,7 +210,7 @@ const reactNamingPlugin = {
             }
 
             let reactSpecialRootIndex = -1;
-            let isInChildComponentsTree = false;
+            let isInRelaxedDirectoryTree = false;
 
             for (let index = 0; index < directoryParts.length; index += 1) {
               const directoryName = directoryParts[index];
@@ -211,10 +219,10 @@ const reactNamingPlugin = {
               if (
                 reactSpecialRootIndex !== -1
                 && index > reactSpecialRootIndex
-                && !isInChildComponentsTree
+                && !isInRelaxedDirectoryTree
               ) {
-                if (directoryName === 'components') {
-                  isInChildComponentsTree = true;
+                if (reactRelaxedDirectoryNames.has(directoryName)) {
+                  isInRelaxedDirectoryTree = true;
                 } else {
                   expectedPatternKey = 'pascalCase';
                 }
@@ -237,7 +245,7 @@ const reactNamingPlugin = {
                 && reactPascalCaseDirectoryRoots.has(directoryName)
               ) {
                 reactSpecialRootIndex = index;
-                isInChildComponentsTree = false;
+                isInRelaxedDirectoryTree = false;
               }
             }
           },
