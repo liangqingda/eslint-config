@@ -127,7 +127,7 @@ const baseRules = {
   'space-infix-ops': 'error',
   'space-in-parens': 'error',
   'space-before-blocks': 'error',
-  '@stylistic/newline-per-chained-call': ['error', { ignoreChainWithDepth: 2 }],
+  '@stylistic/newline-per-chained-call': ['error', { ignoreChainWithDepth: 1 }],
   // Tenary
   'no-unneeded-ternary': 'error',
   'no-nested-ternary': 'error',

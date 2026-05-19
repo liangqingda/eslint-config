@@ -44,6 +44,7 @@ module.exports = [...reactTypedConfig];
 
 ```json
 {
+  "editor.formatOnSave": false,
   "eslint.validate": [
     "javascript",
     "javascriptreact",
@@ -59,6 +60,7 @@ module.exports = [...reactTypedConfig];
 
 这几个配置分别表示：
 
+- `editor.formatOnSave: false`：避免保存时再额外触发 formatter，把 ESLint 刚修好的内容改回去
 - `eslint.validate`：告诉 VS Code 这些语言类型要交给 ESLint 检查
 - `eslint.format.enable: false`：避免把 ESLint 当作纯格式化工具，减少和 Prettier 的职责混淆
 - `editor.codeActionsOnSave.source.fixAll.eslint`：保存时执行 ESLint 可自动修复的问题
@@ -148,6 +150,12 @@ module.exports = [...reactTypedConfig];
 - 工作区目录打开错了
 - monorepo 没配置 `eslint.workingDirectories`
 - 当前文件没有被 `eslint.validate` 覆盖
+
+如果你看到“保存后先变成多行，马上又变回单行”，重点检查：
+
+1. `editor.formatOnSave` 是否还开着
+2. JavaScript / TypeScript 的 `defaultFormatter` 是否仍然指向 `esbenp.prettier-vscode`
+3. 是否安装了会在保存时自动格式化 JS/TS 的其他扩展
 
 ## 8. 推荐的最小可用配置
 

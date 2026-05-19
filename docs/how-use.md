@@ -140,6 +140,13 @@ module.exports = require('@liangqingda/eslint-config/prettier.json');
 - Prettier 继续负责通用格式化，但不要指望它单独维持链式调用换行
 - 如果是编辑器保存自动修复，优先配置为保存时执行 ESLint fix
 
+如果你在编辑器里看到“保存后先被换行，然后又立刻恢复成单行”，通常说明：
+
+- ESLint 先按规则把链式调用修成了多行
+- 随后 Prettier 又在保存阶段把这段代码重新格式化成了单行
+
+这时需要调整使用方项目的保存流程，而不是继续修改 `prettier.json`。
+
 ## 常见接入方式总结
 
 - React + TypeScript：`@liangqingda/eslint-config/react-typed`
