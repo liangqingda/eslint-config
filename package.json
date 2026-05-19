@@ -1,6 +1,6 @@
 {
   "name": "@liangqingda/eslint-config",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "main": "index.js",
   "exports": {
     ".": "./index.js",
@@ -28,6 +28,7 @@
   "private": false,
   "dependencies": {
     "@eslint/js": "^9.39.4",
+    "@stylistic/eslint-plugin": "^5.10.0",
     "@typescript-eslint/eslint-plugin": "^8.59.3",
     "@typescript-eslint/parser": "^8.59.3",
     "eslint-config-prettier": "^10.1.8",

@@ -128,6 +128,18 @@ module.exports = [
 module.exports = require('@liangqingda/eslint-config/prettier.json');
 ```
 
+补充说明：
+
+- 链式调用换行不是通过 `prettier.json` 单独控制的，而是由这套 ESLint 规则统一约束。
+- 当前共享配置要求链式调用从第二段开始换行，例如 `foo().bar()` 需要改成多行链式写法。
+- 如果同一段代码后续还会再经过 Prettier 格式化，较短链式调用可能被重新压回单行，这时应以 ESLint fix 的结果为准，或调整使用方的格式化流程。
+
+推荐做法：
+
+- JavaScript / TypeScript 代码风格修复优先使用 `eslint --fix`
+- Prettier 继续负责通用格式化，但不要指望它单独维持链式调用换行
+- 如果是编辑器保存自动修复，优先配置为保存时执行 ESLint fix
+
 ## 常见接入方式总结
 
 - React + TypeScript：`@liangqingda/eslint-config/react-typed`
