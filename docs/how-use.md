@@ -72,10 +72,10 @@ module.exports = [...reactConfig];
   - 所有非 `tsx` 文件默认都使用中划线命名（`kebab-case`）。
   - 只要文件名以 `use` 开头，就会按 Hooks 文件处理，必须以 `use` 开头并使用小驼峰命名（`camelCase`），例如 `useStore.ts`、`useStore.tsx`。
   - 只要文件位于 `hooks/` 目录中，也会按 Hooks 文件处理，因此不能写成 `store.ts`、`user-store.ts`，而必须写成 `useStore.ts` 这类形式。
-  - 当文件位于 `pages/`、`components/`、`layouts/` 目录树内时，除子 `components/`、`utils/`、`types/`、`hooks/`、`constants/`、`consts/` 目录及其后代目录外，目录名必须使用大驼峰命名（`PascalCase`）。
+  - 当文件位于 `pages/`、`components/`、`layouts/` 目录树内时，除目录名本身正好为 `components`、`utils`、`types`、`hooks`、`constants`、`consts` 外，其他子目录名都必须使用大驼峰命名（`PascalCase`）。
   - 当文件位于 `pages/`、`components/`、`layouts/` 目录树内时，除 `index.tsx` 外，其他 `tsx` 文件必须使用大驼峰命名（`PascalCase`）。
-  - 子 `components/`、`utils/`、`types/`、`hooks/`、`constants/`、`consts/` 目录本身以及它们下面的目录会恢复为中划线命名，但其中位于 `pages/`、`components/`、`layouts/` 目录树内的 `tsx` 文件仍然继续要求使用大驼峰命名。
-  - 例如 `src/pages/Home/components/user-card/CardItem.tsx`、`src/pages/Home/utils/user-service.ts`、`src/pages/Home/types/user-profile.ts`、`src/pages/Home/constants/api-url.ts`、`src/hooks/useStore.ts` 都是合法命名。
+  - `components/`、`utils/`、`types/`、`hooks/`、`constants/`、`consts/` 这些目录名本身可以直接使用当前写法，但它们的子目录不会继承这条例外规则，仍然按所在位置继续校验。
+  - 例如 `src/pages/Home/components/CardItem.tsx`、`src/pages/Home/utils/UserService/fetch-user.ts`、`src/pages/Home/types/UserProfile/user-profile.ts`、`src/pages/Home/constants/ApiConfig/api-url.ts`、`src/hooks/useStore.ts` 都是合法命名；而 `src/pages/Home/utils/user-service/fetch-user.ts` 不再合法。
 - 所有 TypeScript 相关配置都会校验 `enum` 名称必须使用 `PascalCase`，并且以 `Enum` 结尾，例如 `GroupEnum`、`NameEnum`。
 - 任意配置下，只要文件位于 `constants/` 或 `consts/` 目录中，非函数值的 `const` 变量都必须使用全大写下划线命名，例如 `const API_URL = '...'`；`const fn = () => {}`、`function fn() {}`、`let localValue = 1` 不受这条规则影响。
 

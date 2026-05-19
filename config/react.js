@@ -210,7 +210,6 @@ const reactNamingPlugin = {
             }
 
             let reactSpecialRootIndex = -1;
-            let isInRelaxedDirectoryTree = false;
 
             for (let index = 0; index < directoryParts.length; index += 1) {
               const directoryName = directoryParts[index];
@@ -219,13 +218,9 @@ const reactNamingPlugin = {
               if (
                 reactSpecialRootIndex !== -1
                 && index > reactSpecialRootIndex
-                && !isInRelaxedDirectoryTree
+                && !reactRelaxedDirectoryNames.has(directoryName)
               ) {
-                if (reactRelaxedDirectoryNames.has(directoryName)) {
-                  isInRelaxedDirectoryTree = true;
-                } else {
-                  expectedPatternKey = 'pascalCase';
-                }
+                expectedPatternKey = 'pascalCase';
               }
 
               if (!namingPatterns[expectedPatternKey].test(directoryName)) {
@@ -245,7 +240,6 @@ const reactNamingPlugin = {
                 && reactPascalCaseDirectoryRoots.has(directoryName)
               ) {
                 reactSpecialRootIndex = index;
-                isInRelaxedDirectoryTree = false;
               }
             }
           },
