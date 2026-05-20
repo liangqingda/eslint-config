@@ -1,12 +1,14 @@
 // 定义面向 Web/React 项目的文件与目录命名规则插件。
 const path = require('path');
 
+// 进入这些目录后，后续后代目录默认切换为 PascalCase 规则。
 const reactPascalCaseDirectoryModeRoots = new Set([
   'pages',
   'views',
   'components',
   'layouts',
 ]);
+// 进入这些目录后，后续后代目录默认切换为 kebab-case 规则。
 const reactKebabCaseDirectoryModeRoots = new Set([
   'utils',
   'types',
@@ -15,12 +17,25 @@ const reactKebabCaseDirectoryModeRoots = new Set([
   'constants',
   'consts',
 ]);
+// 这些目录名本身在任何位置都允许直接使用固定的小写写法。
 const reactAlwaysAllowedDirectoryNames = new Set([
   'components',
   'layouts',
   ...reactKebabCaseDirectoryModeRoots,
 ]);
+// 位于大驼峰目录树内时，允许保留当前写法的特殊主文件名。
+const reactPascalCaseFileNameExceptions = new Set([
+  'utils',
+  'index',
+  'types',
+  'hooks',
+  'consts',
+  'constants',
+  'store',
+]);
+// 只有直接位于这些目录下的根文件，才要求使用 useXxx 命名。
 const reactUsePrefixedFileDirectoryNames = new Set(['hooks', 'store']);
+// 参与这套命名规则检查的脚本文件扩展名集合。
 const supportedScriptExtensions = new Set([
   '.ts',
   '.cts',
@@ -32,18 +47,21 @@ const supportedScriptExtensions = new Set([
   '.mjs',
   '.cjs',
 ]);
+// 各类文件或目录命名风格对应的正则表达式。
 const namingPatterns = {
   kebabCase: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
   camelCase: /^[a-z][a-zA-Z0-9]*$/,
   usePrefixedCamelCase: /^use[A-Z0-9][a-zA-Z0-9]*$/,
   pascalCase: /^[A-Z][a-zA-Z0-9]*$/,
 };
+// 生成错误提示时使用的人类可读命名风格描述。
 const namingPatternLabels = {
   kebabCase: 'kebab-case',
   camelCase: 'camelCase',
   usePrefixedCamelCase: 'camelCase and start with "use"',
   pascalCase: 'PascalCase',
 };
+// 对外暴露给 React 配置启用的命名规则开关集合。
 const reactNamingRules = {
   'liangqingda-react/filename-naming-convention': 'error',
   'liangqingda-react/folder-naming-convention': 'error',
@@ -147,21 +165,18 @@ const getExpectedReactFileNamePattern = (
     return 'kebabCase';
   }
 
-  if (extension === '.tsx' || extension === '.vue') {
-    if (baseName === 'index') {
+  if (isInReactPascalCaseDirectoryTree(directoryParts)) {
+    if (reactPascalCaseFileNameExceptions.has(baseName)) {
       return null;
     }
 
-    if (isInReactPascalCaseDirectoryTree(directoryParts)) {
-      return 'pascalCase';
-    }
-
-    return null;
+    return 'pascalCase';
   }
 
   return 'kebabCase';
 };
 
+// 自定义 ESLint 插件，实现 Web 项目的文件名与目录名校验。
 const reactNamingPlugin = {
   rules: {
     'filename-naming-convention': {

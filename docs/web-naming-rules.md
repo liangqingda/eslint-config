@@ -2,6 +2,8 @@
 
 本文专门说明 [`config/web-naming-rules.js`](/Users/lqd/projects/eslint-config/config/web-naming-rules.js) 中定义的 Web 命名规则。
 
+这个实现文件当前按“顶层命名语义常量 + 辅助判断函数 + ESLint 插件导出”的方式组织，便于集中维护目录语义与文件命名策略。
+
 当前这套命名规则主要被下面两个配置复用：
 
 - `@liangqingda/eslint-config/react`
@@ -108,24 +110,35 @@
 - `src/pages/Home/utils/UserService/fetch-user.ts` 不合法
 - `src/store/OrderCache/get-item.ts` 不合法
 
-## 6. `tsx` / `vue` 文件规则
+## 6. 大驼峰根目录下的文件规则
 
 如果文件位于 `pages`、`views`、`components`、`layouts` 目录树内：
 
-- `index.tsx`、`index.vue` 允许保留 `index`
-- 其他 `tsx`、`vue` 文件必须使用大驼峰命名（`PascalCase`）
+- 文件名默认必须使用大驼峰命名（`PascalCase`）
+- 但下面这些主文件名允许直接保留当前写法：
+  - `utils`
+  - `index`
+  - `types`
+  - `hooks`
+  - `consts`
+  - `constants`
+  - `store`
 
 例如：
 
 - `src/pages/Home/index.tsx` 合法
 - `src/views/Home/index.vue` 合法
 - `src/pages/Home/UserCard.tsx` 合法
+- `src/pages/Home/UserCard.ts` 合法
 - `src/views/Home/UserCard.vue` 合法
 - `src/components/UserCard/Header.tsx` 合法
+- `src/pages/Home/utils.ts` 合法
+- `src/pages/Home/store.ts` 合法
 - `src/pages/Home/user-card.tsx` 不合法
+- `src/pages/Home/user-card.ts` 不合法
 - `src/views/Home/user-card.vue` 不合法
 
-这条规则只针对 `tsx`、`vue` 文件，不会自动放宽普通 `ts`、`js` 文件。
+也就是说，在这些大驼峰根目录树下，这条规则不再只针对 `tsx`、`vue` 文件，普通 `ts`、`js` 文件同样会被要求使用大驼峰命名，除非主文件名命中上述例外名单。
 
 ## 7. `hooks` / `store` 根文件规则
 
@@ -162,8 +175,10 @@
 
 - `src/pages/Home/components/Profile/CardItem.tsx`
 - `src/views/Home/Profile.vue`
+- `src/pages/Home/Profile.ts`
 - `src/pages/Home/components/utils/user-service/fetch-user.ts`
 - `src/pages/Home/layouts/MainLayout/index.tsx`
+- `src/pages/Home/store.ts`
 - `src/pages/Home/types/user-profile/type-guards.ts`
 - `src/hooks/useTest.ts`
 - `src/hooks/utils/test-a.ts`
@@ -177,6 +192,7 @@
 - `src/pages/home/components/Profile/CardItem.tsx`
 - `src/views/home/Profile.vue`
 - `src/pages/Home/components/profile/CardItem.tsx`
+- `src/pages/Home/user-card.ts`
 - `src/pages/Home/types/UserProfile/type-guards.ts`
 - `src/pages/Home/utils/UserService/fetch-user.ts`
 - `src/hooks/test-a.ts`
