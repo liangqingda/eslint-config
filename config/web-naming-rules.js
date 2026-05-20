@@ -123,10 +123,18 @@ const isInReactUsePrefixedRootFileDirectory = (directoryParts) => {
   );
 };
 
-const isInReactPascalCaseDirectoryTree = (directoryParts) =>
-  directoryParts.some((directoryName) =>
-    reactPascalCaseDirectoryModeRoots.has(directoryName),
-  );
+const getExpectedReactFilePatternKeyByDirectoryParts = (directoryParts) =>
+  directoryParts.reduce((expectedFilePatternKey, directoryName) => {
+    if (reactKebabCaseDirectoryModeRoots.has(directoryName)) {
+      return 'kebabCase';
+    }
+
+    if (reactPascalCaseDirectoryModeRoots.has(directoryName)) {
+      return 'pascalCase';
+    }
+
+    return expectedFilePatternKey;
+  }, 'kebabCase');
 
 const getExpectedReactDirectoryPatternKey = (
   directoryName,
@@ -175,7 +183,11 @@ const getExpectedReactFileNamePattern = (
     return 'kebabCase';
   }
 
-  if (isInReactPascalCaseDirectoryTree(directoryParts)) {
+  const expectedFilePatternKey = getExpectedReactFilePatternKeyByDirectoryParts(
+    directoryParts,
+  );
+
+  if (expectedFilePatternKey === 'pascalCase') {
     if (reactPascalCaseFileNameExceptions.has(baseName)) {
       return null;
     }
@@ -183,7 +195,7 @@ const getExpectedReactFileNamePattern = (
     return 'pascalCase';
   }
 
-  return 'kebabCase';
+  return expectedFilePatternKey;
 };
 
 // 自定义 ESLint 插件，实现 Web 项目的文件名与目录名校验。

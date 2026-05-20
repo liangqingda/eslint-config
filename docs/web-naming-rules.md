@@ -132,7 +132,7 @@
 
 如果文件位于 `pages`、`views`、`components`、`layouts` 目录树内：
 
-- 只有 `jsx`、`tsx`、`vue` 文件默认必须使用大驼峰命名（`PascalCase`）
+- 在没有被后续 `utils`、`types`、`hooks`、`store`、`constants`、`consts` 目录切回其他模式之前，只有 `jsx`、`tsx`、`vue` 文件默认必须使用大驼峰命名（`PascalCase`）
 - 但下面这些主文件名允许直接保留当前写法：
   - `utils`
   - `index`
@@ -141,6 +141,8 @@
   - `consts`
   - `constants`
   - `store`
+
+如果后续路径又进入了 `utils`、`types`、`hooks`、`store`、`constants`、`consts` 目录，则文件命名规则也会跟着切回该目录树自己的规则，不会继续沿用上层的大驼峰文件命名要求。
 
 例如：
 
@@ -153,6 +155,8 @@
 - `src/components/UserCard/Header.tsx` 合法
 - `src/pages/Home/utils.ts` 合法
 - `src/pages/Home/store.ts` 合法
+- `src/pages/User/components/AppTest/utils/aa-bb.ts` 合法
+- `src/pages/User/components/AppTest/types/aa-bb.ts` 合法
 - `src/pages/Home/user-card.tsx` 不合法
 - `src/pages/Home/UserCard.ts` 不合法
 - `src/views/Home/user-card.vue` 不合法
