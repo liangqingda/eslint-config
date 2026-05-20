@@ -11,14 +11,17 @@ const {
 } = require('./shared');
 const { baseConfig } = require('./base');
 
-const reactPascalCaseDirectoryRoots = new Set(['pages', 'components', 'layouts']);
-const reactRelaxedDirectoryNames = new Set([
-  'components',
+const reactPascalCaseDirectoryModeRoots = new Set(['pages', 'components', 'layouts']);
+const reactKebabCaseDirectoryModeRoots = new Set([
   'utils',
   'types',
   'hooks',
   'constants',
   'consts',
+]);
+const reactAlwaysAllowedDirectoryNames = new Set([
+  'components',
+  ...reactKebabCaseDirectoryModeRoots,
 ]);
 const supportedScriptExtensions = new Set([
   '.ts',
@@ -98,10 +101,34 @@ const isUsePrefixedHookFileBaseName = (baseName) =>
 
 const isHooksDirectoryFile = (directoryParts) => directoryParts.includes('hooks');
 
-const getReactSpecialRootIndex = (directoryParts) =>
-  directoryParts.findIndex((directoryName) =>
-    reactPascalCaseDirectoryRoots.has(directoryName),
+const isInReactPascalCaseDirectoryTree = (directoryParts) =>
+  directoryParts.some((directoryName) =>
+    reactPascalCaseDirectoryModeRoots.has(directoryName),
   );
+
+const getExpectedReactDirectoryPatternKey = (
+  directoryName,
+  expectedNestedDirectoryPatternKey,
+) => (
+  reactAlwaysAllowedDirectoryNames.has(directoryName)
+    ? null
+    : expectedNestedDirectoryPatternKey
+);
+
+const getNextReactNestedDirectoryPatternKey = (
+  directoryName,
+  expectedNestedDirectoryPatternKey,
+) => {
+  if (reactPascalCaseDirectoryModeRoots.has(directoryName)) {
+    return 'pascalCase';
+  }
+
+  if (reactKebabCaseDirectoryModeRoots.has(directoryName)) {
+    return 'kebabCase';
+  }
+
+  return expectedNestedDirectoryPatternKey;
+};
 
 const getExpectedReactFileNamePattern = (
   baseName,
@@ -120,7 +147,7 @@ const getExpectedReactFileNamePattern = (
       return null;
     }
 
-    if (getReactSpecialRootIndex(directoryParts) !== -1) {
+    if (isInReactPascalCaseDirectoryTree(directoryParts)) {
       return 'pascalCase';
     }
 
@@ -209,21 +236,19 @@ const reactNamingPlugin = {
               return;
             }
 
-            let reactSpecialRootIndex = -1;
+            let expectedNestedDirectoryPatternKey = 'kebabCase';
 
             for (let index = 0; index < directoryParts.length; index += 1) {
               const directoryName = directoryParts[index];
-              let expectedPatternKey = 'kebabCase';
+              const expectedPatternKey = getExpectedReactDirectoryPatternKey(
+                directoryName,
+                expectedNestedDirectoryPatternKey,
+              );
 
               if (
-                reactSpecialRootIndex !== -1
-                && index > reactSpecialRootIndex
-                && !reactRelaxedDirectoryNames.has(directoryName)
+                expectedPatternKey
+                && !namingPatterns[expectedPatternKey].test(directoryName)
               ) {
-                expectedPatternKey = 'pascalCase';
-              }
-
-              if (!namingPatterns[expectedPatternKey].test(directoryName)) {
                 context.report({
                   node,
                   messageId: 'unexpectedFolderName',
@@ -235,12 +260,11 @@ const reactNamingPlugin = {
                 });
               }
 
-              if (
-                reactSpecialRootIndex === -1
-                && reactPascalCaseDirectoryRoots.has(directoryName)
-              ) {
-                reactSpecialRootIndex = index;
-              }
+              expectedNestedDirectoryPatternKey =
+                getNextReactNestedDirectoryPatternKey(
+                  directoryName,
+                  expectedNestedDirectoryPatternKey,
+                );
             }
           },
         };
