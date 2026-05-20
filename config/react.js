@@ -21,7 +21,7 @@ const reactKebabCaseDirectoryModeRoots = new Set([
   'consts',
 ]);
 const reactAlwaysAllowedDirectoryNames = new Set([
-  'components',
+  ...reactPascalCaseDirectoryModeRoots,
   ...reactKebabCaseDirectoryModeRoots,
 ]);
 const reactUsePrefixedFileDirectoryNames = new Set(['hooks', 'store']);

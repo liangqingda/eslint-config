@@ -72,8 +72,8 @@ module.exports = [...reactConfig];
   - 所有非 `tsx` 文件默认都使用中划线命名（`kebab-case`）。
   - 只有直接位于 `hooks/`、`store/` 目录下的根文件，才允许并且要求使用以 `use` 开头的小驼峰命名（`camelCase`），例如 `hooks/useStore.ts`、`store/useUser.tsx`。
   - 因此 `hooks/`、`store/` 目录下的根文件不能写成 `store.ts`、`user-store.ts`，而必须写成 `useStore.ts` 这类形式；反过来，不在这两个目录下的根文件也不应该使用 `useXxx` 这种命名。
-  - `components/`、`utils/`、`types/`、`hooks/`、`store/`、`constants/`、`consts/` 这几个目录名本身，无论出现在任何位置都始终合法。
-  - `pages/`、`components/`、`layouts/` 这几个目录里继续嵌套的目录，默认都必须使用大驼峰命名（`PascalCase`）。
+  - `pages/`、`components/`、`layouts/`、`utils/`、`types/`、`hooks/`、`store/`、`constants/`、`consts/` 这些语义目录名本身，无论出现在任何位置都始终合法。
+  - `pages/`、`components/`、`layouts/` 这几个目录里继续嵌套的后代目录，默认都必须使用大驼峰命名（`PascalCase`）。
   - `utils/`、`types/`、`hooks/`、`store/`、`constants/`、`consts/` 这几个目录里继续嵌套的目录，默认都必须使用中划线命名（`kebab-case`）。
   - 当文件位于 `pages/`、`components/`、`layouts/` 目录树内时，除 `index.tsx` 外，其他 `tsx` 文件必须使用大驼峰命名（`PascalCase`）。
   - 例如 `src/pages/Home/components/Profile/CardItem.tsx`、`src/hooks/useTest.ts`、`src/hooks/utils/test-a.ts`、`src/hooks/utils/a-b/a.ts`、`src/store/useUser.ts`、`src/features/order/constants/api-config.ts` 都是合法命名；而 `src/pages/Home/components/profile/CardItem.tsx`、`src/pages/Home/types/UserProfile/type-guards.ts`、`src/utils/use-user.ts`、`src/hooks/test-a.ts` 不合法。

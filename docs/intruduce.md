@@ -269,8 +269,8 @@ React 配置中增加或强化了下面这些规则：
   - 所有目录默认使用中划线命名（`kebab-case`）
   - 所有非 `tsx` 文件默认使用中划线命名（`kebab-case`）
   - 只有直接位于 `hooks/`、`store/` 目录下的根文件，才允许并且要求使用以 `use` 开头的小驼峰命名（`camelCase`）
-  - `components/`、`utils/`、`types/`、`hooks/`、`store/`、`constants/`、`consts/` 这几个目录名本身无论出现在任何位置都始终合法
-  - `pages/`、`components/`、`layouts/` 这几个目录里继续嵌套的目录，默认必须使用大驼峰命名（`PascalCase`）
+  - `pages/`、`components/`、`layouts/`、`utils/`、`types/`、`hooks/`、`store/`、`constants/`、`consts/` 这些语义目录名本身无论出现在任何位置都始终合法
+  - `pages/`、`components/`、`layouts/` 这几个目录里继续嵌套的后代目录，默认必须使用大驼峰命名（`PascalCase`）
   - `utils/`、`types/`、`hooks/`、`store/`、`constants/`、`consts/` 这几个目录里继续嵌套的目录，默认必须使用中划线命名（`kebab-case`）
   - `pages/`、`components/`、`layouts/` 目录树中的 `tsx` 文件，除 `index.tsx` 外必须使用大驼峰命名（`PascalCase`）
 
