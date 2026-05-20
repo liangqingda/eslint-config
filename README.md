@@ -8,4 +8,5 @@
 
 - [配置介绍](./docs/intruduce.md)
 - [使用方式](./docs/how-use.md)
+- [Web 命名规则](./docs/web-naming-rules.md)
 - [VS Code 配置](./docs/vscode.md)

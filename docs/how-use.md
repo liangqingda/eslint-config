@@ -67,16 +67,7 @@ module.exports = [...reactConfig];
 - React 版本使用 `detect` 自动识别，不需要手动指定版本。
 - 样式文件导入如 `*.css`、`*.less`、`*.scss` 会参与导入顺序校验。
 - JSX 中对 `<img src={...}>` 有额外限制，推荐先 `import` 资源，再传给 `src`。
-- `react` 和 `react-typed` 额外约束了 React 项目里的命名方式：
-  - 所有目录默认都使用中划线命名（`kebab-case`）。
-  - 所有非 `tsx` 文件默认都使用中划线命名（`kebab-case`）。
-  - 只有直接位于 `hooks/`、`store/` 目录下的根文件，才允许并且要求使用以 `use` 开头的小驼峰命名（`camelCase`），例如 `hooks/useStore.ts`、`store/useUser.tsx`。
-  - 因此 `hooks/`、`store/` 目录下的根文件不能写成 `store.ts`、`user-store.ts`，而必须写成 `useStore.ts` 这类形式；反过来，不在这两个目录下的根文件也不应该使用 `useXxx` 这种命名。
-  - `pages/`、`components/`、`layouts/`、`utils/`、`types/`、`hooks/`、`store/`、`constants/`、`consts/` 这些语义目录名本身，无论出现在任何位置都始终合法。
-  - `pages/`、`components/`、`layouts/` 这几个目录里继续嵌套的后代目录，默认都必须使用大驼峰命名（`PascalCase`）。
-  - `utils/`、`types/`、`hooks/`、`store/`、`constants/`、`consts/` 这几个目录里继续嵌套的目录，默认都必须使用中划线命名（`kebab-case`）。
-  - 当文件位于 `pages/`、`components/`、`layouts/` 目录树内时，除 `index.tsx` 外，其他 `tsx` 文件必须使用大驼峰命名（`PascalCase`）。
-  - 例如 `src/pages/Home/components/Profile/CardItem.tsx`、`src/hooks/useTest.ts`、`src/hooks/utils/test-a.ts`、`src/hooks/utils/a-b/a.ts`、`src/store/useUser.ts`、`src/features/order/constants/api-config.ts` 都是合法命名；而 `src/pages/Home/components/profile/CardItem.tsx`、`src/pages/Home/types/UserProfile/type-guards.ts`、`src/utils/use-user.ts`、`src/hooks/test-a.ts` 不合法。
+- `react` 和 `react-typed` 额外带有一套面向 Web / React 项目的命名规则，包括目录语义切换、`tsx` 组件命名、`hooks/` 与 `store/` 根文件命名等；完整说明见 [Web 命名规则](/Users/lqd/projects/eslint-config/docs/web-naming-rules.md)。
 - 所有 TypeScript 相关配置都会校验 `enum` 名称必须使用 `PascalCase`，并且以 `Enum` 结尾，例如 `GroupEnum`、`NameEnum`。
 - 任意配置下，只要文件位于 `constants/` 或 `consts/` 目录中，非函数值的 `const` 变量都必须使用全大写下划线命名，例如 `const API_URL = '...'`；`const fn = () => {}`、`function fn() {}`、`let localValue = 1` 不受这条规则影响。
 

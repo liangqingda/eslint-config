@@ -213,7 +213,7 @@ parserOptions: {
 
 ## 5. React 配置 `@liangqingda/eslint-config/react`
 
-入口文件是 [`exports/react.js`](/Users/lqd/projects/eslint-config/exports/react.js)，它会读取聚合层 `configs.js`；`reactConfig` 的实际实现位于 [`config/react.js`](/Users/lqd/projects/eslint-config/config/react.js)。
+入口文件是 [`exports/react.js`](/Users/lqd/projects/eslint-config/exports/react.js)，它会读取聚合层 `configs.js`；`reactConfig` 的规则装配位于 [`config/react.js`](/Users/lqd/projects/eslint-config/config/react.js)，其中 Web/React 命名规则单独拆分在 [`config/web-naming-rules.js`](/Users/lqd/projects/eslint-config/config/web-naming-rules.js)。
 
 这套配置在基础配置之上又叠加了：
 
@@ -265,14 +265,7 @@ React 配置中增加或强化了下面这些规则：
 - `max-lines` 限制单文件最多 490 行，注释不计入
 - `arrow-parens` 要求箭头函数参数始终带括号
 - `import/no-duplicates` 开启
-- React 项目命名规则会按目录语义区分：
-  - 所有目录默认使用中划线命名（`kebab-case`）
-  - 所有非 `tsx` 文件默认使用中划线命名（`kebab-case`）
-  - 只有直接位于 `hooks/`、`store/` 目录下的根文件，才允许并且要求使用以 `use` 开头的小驼峰命名（`camelCase`）
-  - `pages/`、`components/`、`layouts/`、`utils/`、`types/`、`hooks/`、`store/`、`constants/`、`consts/` 这些语义目录名本身无论出现在任何位置都始终合法
-  - `pages/`、`components/`、`layouts/` 这几个目录里继续嵌套的后代目录，默认必须使用大驼峰命名（`PascalCase`）
-  - `utils/`、`types/`、`hooks/`、`store/`、`constants/`、`consts/` 这几个目录里继续嵌套的目录，默认必须使用中划线命名（`kebab-case`）
-  - `pages/`、`components/`、`layouts/` 目录树中的 `tsx` 文件，除 `index.tsx` 外必须使用大驼峰命名（`PascalCase`）
+- React 项目额外带有一套 Web 命名规则，覆盖目录语义、`tsx` 组件文件、`hooks/` 与 `store/` 根文件等场景；完整说明见 [Web 命名规则](/Users/lqd/projects/eslint-config/docs/web-naming-rules.md)
 
 导入顺序也做了额外处理：
 
@@ -288,7 +281,7 @@ React 配置还扩展了 `no-restricted-syntax`，新增了一条针对 `<img>` 
 
 ## 6. React Typed 配置 `@liangqingda/eslint-config/react-typed`
 
-入口文件是 [`exports/react-typed.js`](/Users/lqd/projects/eslint-config/exports/react-typed.js)，它会读取聚合层 `configs.js`；`reactTypedConfig` 的实际实现位于 [`config/react.js`](/Users/lqd/projects/eslint-config/config/react.js)。
+入口文件是 [`exports/react-typed.js`](/Users/lqd/projects/eslint-config/exports/react-typed.js)，它会读取聚合层 `configs.js`；`reactTypedConfig` 的规则装配位于 [`config/react.js`](/Users/lqd/projects/eslint-config/config/react.js)，其中 Web/React 命名规则单独拆分在 [`config/web-naming-rules.js`](/Users/lqd/projects/eslint-config/config/web-naming-rules.js)。
 
 它本质上是下面两者的组合：
 

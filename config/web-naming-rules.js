@@ -1,0 +1,284 @@
+// 定义面向 Web/React 项目的文件与目录命名规则插件。
+const path = require('path');
+
+const reactPascalCaseDirectoryModeRoots = new Set([
+  'pages',
+  'views',
+  'components',
+  'layouts',
+]);
+const reactKebabCaseDirectoryModeRoots = new Set([
+  'utils',
+  'types',
+  'hooks',
+  'store',
+  'constants',
+  'consts',
+]);
+const reactAlwaysAllowedDirectoryNames = new Set([
+  'components',
+  'layouts',
+  ...reactKebabCaseDirectoryModeRoots,
+]);
+const reactUsePrefixedFileDirectoryNames = new Set(['hooks', 'store']);
+const supportedScriptExtensions = new Set([
+  '.ts',
+  '.cts',
+  '.mts',
+  '.tsx',
+  '.vue',
+  '.js',
+  '.jsx',
+  '.mjs',
+  '.cjs',
+]);
+const namingPatterns = {
+  kebabCase: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+  camelCase: /^[a-z][a-zA-Z0-9]*$/,
+  usePrefixedCamelCase: /^use[A-Z0-9][a-zA-Z0-9]*$/,
+  pascalCase: /^[A-Z][a-zA-Z0-9]*$/,
+};
+const namingPatternLabels = {
+  kebabCase: 'kebab-case',
+  camelCase: 'camelCase',
+  usePrefixedCamelCase: 'camelCase and start with "use"',
+  pascalCase: 'PascalCase',
+};
+const reactNamingRules = {
+  'liangqingda-react/filename-naming-convention': 'error',
+  'liangqingda-react/folder-naming-convention': 'error',
+};
+
+const getLintTargetPathParts = (context) => {
+  const { cwd, physicalFilename } = context;
+
+  if (!physicalFilename || physicalFilename.startsWith('<')) {
+    return null;
+  }
+
+  const relativePath = path.relative(cwd, physicalFilename);
+
+  if (
+    !relativePath ||
+    relativePath.startsWith('..') ||
+    path.isAbsolute(relativePath)
+  ) {
+    return null;
+  }
+
+  const normalizedPath = relativePath.split(path.sep).join('/');
+  const pathParts = normalizedPath.split('/').filter(Boolean);
+
+  if (!pathParts.length) {
+    return null;
+  }
+
+  return {
+    relativePath: normalizedPath,
+    directoryParts: pathParts.slice(0, -1),
+    fileName: pathParts[pathParts.length - 1],
+  };
+};
+
+const getPrimaryFileName = (fileName) => {
+  const firstDotIndex = fileName.indexOf('.');
+
+  if (firstDotIndex === -1) {
+    return fileName;
+  }
+
+  return fileName.slice(0, firstDotIndex);
+};
+
+const isUsePrefixedFileBaseName = (baseName) =>
+  /^use[A-Z0-9][a-zA-Z0-9]*$/.test(baseName);
+
+const isInReactUsePrefixedRootFileDirectory = (directoryParts) => {
+  if (!directoryParts.length) {
+    return false;
+  }
+
+  return reactUsePrefixedFileDirectoryNames.has(
+    directoryParts[directoryParts.length - 1],
+  );
+};
+
+const isInReactPascalCaseDirectoryTree = (directoryParts) =>
+  directoryParts.some((directoryName) =>
+    reactPascalCaseDirectoryModeRoots.has(directoryName),
+  );
+
+const getExpectedReactDirectoryPatternKey = (
+  directoryName,
+  expectedNestedDirectoryPatternKey,
+) =>
+  reactAlwaysAllowedDirectoryNames.has(directoryName)
+    ? null
+    : expectedNestedDirectoryPatternKey;
+
+const getNextReactNestedDirectoryPatternKey = (
+  directoryName,
+  expectedNestedDirectoryPatternKey,
+) => {
+  if (reactPascalCaseDirectoryModeRoots.has(directoryName)) {
+    return 'pascalCase';
+  }
+
+  if (reactKebabCaseDirectoryModeRoots.has(directoryName)) {
+    return 'kebabCase';
+  }
+
+  return expectedNestedDirectoryPatternKey;
+};
+
+const getExpectedReactFileNamePattern = (
+  baseName,
+  extension,
+  directoryParts,
+) => {
+  const isInUsePrefixedRootFileDirectory =
+    isInReactUsePrefixedRootFileDirectory(directoryParts);
+
+  if (isInUsePrefixedRootFileDirectory) {
+    return 'usePrefixedCamelCase';
+  }
+
+  if (isUsePrefixedFileBaseName(baseName)) {
+    return 'kebabCase';
+  }
+
+  if (extension === '.tsx' || extension === '.vue') {
+    if (baseName === 'index') {
+      return null;
+    }
+
+    if (isInReactPascalCaseDirectoryTree(directoryParts)) {
+      return 'pascalCase';
+    }
+
+    return null;
+  }
+
+  return 'kebabCase';
+};
+
+const reactNamingPlugin = {
+  rules: {
+    'filename-naming-convention': {
+      meta: {
+        type: 'suggestion',
+        schema: [],
+        messages: {
+          unexpectedFileName:
+            'The file "{{ relativePath }}" must use {{ namingPattern }} for "{{ baseName }}".',
+        },
+      },
+      create(context) {
+        return {
+          Program(node) {
+            const targetPathParts = getLintTargetPathParts(context);
+
+            if (!targetPathParts) {
+              return;
+            }
+
+            const { directoryParts, fileName, relativePath } = targetPathParts;
+            const extension = path.extname(fileName);
+
+            if (!supportedScriptExtensions.has(extension)) {
+              return;
+            }
+
+            const baseName = getPrimaryFileName(fileName);
+            const expectedPatternKey = getExpectedReactFileNamePattern(
+              baseName,
+              extension,
+              directoryParts,
+            );
+
+            if (!expectedPatternKey) {
+              return;
+            }
+
+            if (namingPatterns[expectedPatternKey].test(baseName)) {
+              return;
+            }
+
+            context.report({
+              node,
+              messageId: 'unexpectedFileName',
+              data: {
+                relativePath,
+                baseName,
+                namingPattern: namingPatternLabels[expectedPatternKey],
+              },
+            });
+          },
+        };
+      },
+    },
+    'folder-naming-convention': {
+      meta: {
+        type: 'suggestion',
+        schema: [],
+        messages: {
+          unexpectedFolderName:
+            'The folder "{{ directoryName }}" in "{{ relativePath }}" must use {{ namingPattern }}.',
+        },
+      },
+      create(context) {
+        return {
+          Program(node) {
+            const targetPathParts = getLintTargetPathParts(context);
+
+            if (!targetPathParts) {
+              return;
+            }
+
+            const { directoryParts, relativePath } = targetPathParts;
+
+            if (!directoryParts.length) {
+              return;
+            }
+
+            let expectedNestedDirectoryPatternKey = 'kebabCase';
+
+            for (let index = 0; index < directoryParts.length; index += 1) {
+              const directoryName = directoryParts[index];
+              const expectedPatternKey = getExpectedReactDirectoryPatternKey(
+                directoryName,
+                expectedNestedDirectoryPatternKey,
+              );
+
+              if (
+                expectedPatternKey &&
+                !namingPatterns[expectedPatternKey].test(directoryName)
+              ) {
+                context.report({
+                  node,
+                  messageId: 'unexpectedFolderName',
+                  data: {
+                    directoryName,
+                    relativePath,
+                    namingPattern: namingPatternLabels[expectedPatternKey],
+                  },
+                });
+              }
+
+              expectedNestedDirectoryPatternKey =
+                getNextReactNestedDirectoryPatternKey(
+                  directoryName,
+                  expectedNestedDirectoryPatternKey,
+                );
+            }
+          },
+        };
+      },
+    },
+  },
+};
+
+module.exports = {
+  reactNamingPlugin,
+  reactNamingRules,
+};
