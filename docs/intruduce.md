@@ -20,7 +20,7 @@
 
 ## 1. 基础配置 `@liangqingda/eslint-config`
 
-入口文件是 [`exports/index.js`](/Users/lqd/projects/eslint-config/exports/index.js)，它会读取聚合层 [`configs.js`](/Users/lqd/projects/eslint-config/configs.js)；基础配置的实际实现位于 [`config/base.js`](/Users/lqd/projects/eslint-config/config/base.js) 里的 `baseConfig`。
+入口文件是 [`exports/index.js`](/Users/lqd/projects/eslint-config/exports/index.js)，它会直接读取 [`config/base.js`](/Users/lqd/projects/eslint-config/config/base.js) 并导出其中的 `baseConfig`。
 
 这套配置适合作为默认起点，主要由 4 部分组成：
 
@@ -144,7 +144,7 @@ let localValue = 1; // 允许
 
 ## 2. 类型检查配置 `@liangqingda/eslint-config/typed`
 
-入口文件是 [`exports/typed.js`](/Users/lqd/projects/eslint-config/exports/typed.js)，它会读取聚合层 `configs.js`；`typedConfig` 的实际实现位于 [`config/typed.js`](/Users/lqd/projects/eslint-config/config/typed.js)。
+入口文件是 [`exports/typed.js`](/Users/lqd/projects/eslint-config/exports/typed.js)，它会直接读取 [`config/typed.js`](/Users/lqd/projects/eslint-config/config/typed.js) 并导出其中的 `typedConfig`。
 
 这套配置是在基础配置之上再增加一层类型感知规则，并开启：
 
@@ -171,7 +171,7 @@ parserOptions: {
 
 ## 3. Node 配置 `@liangqingda/eslint-config/node`
 
-入口文件是 [`exports/node.js`](/Users/lqd/projects/eslint-config/exports/node.js)，它会读取聚合层 `configs.js`；`nodeConfig` 的实际实现位于 [`config/node.js`](/Users/lqd/projects/eslint-config/config/node.js)。
+入口文件是 [`exports/node.js`](/Users/lqd/projects/eslint-config/exports/node.js)，它会直接读取 [`config/node.js`](/Users/lqd/projects/eslint-config/config/node.js) 并导出其中的 `nodeConfig`。
 
 这套配置是在基础配置之上补充了适用于 Node.js ESM 运行时的环境：
 
@@ -195,7 +195,7 @@ parserOptions: {
 
 ## 4. Node Typed 配置 `@liangqingda/eslint-config/node-typed`
 
-入口文件是 [`exports/node-typed.js`](/Users/lqd/projects/eslint-config/exports/node-typed.js)，它会读取聚合层 `configs.js`；`nodeTypedConfig` 的实际实现位于 [`config/node.js`](/Users/lqd/projects/eslint-config/config/node.js)。
+入口文件是 [`exports/node-typed.js`](/Users/lqd/projects/eslint-config/exports/node-typed.js)，它会直接读取 [`config/node.js`](/Users/lqd/projects/eslint-config/config/node.js) 并导出其中的 `nodeTypedConfig`。
 
 它本质上是下面两者的组合：
 
@@ -213,7 +213,7 @@ parserOptions: {
 
 ## 5. React 配置 `@liangqingda/eslint-config/react`
 
-入口文件是 [`exports/react.js`](/Users/lqd/projects/eslint-config/exports/react.js)，它会读取聚合层 `configs.js`；`reactConfig` 的规则装配位于 [`config/react.js`](/Users/lqd/projects/eslint-config/config/react.js)，其中 Web/React 命名规则单独拆分在 [`config/web-naming-rules.js`](/Users/lqd/projects/eslint-config/config/web-naming-rules.js)。
+入口文件是 [`exports/react.js`](/Users/lqd/projects/eslint-config/exports/react.js)，它会直接读取 [`config/react.js`](/Users/lqd/projects/eslint-config/config/react.js)；`reactConfig` 的规则装配位于该文件中，其中 Web/React 命名规则单独拆分在 [`config/web-naming-rules.js`](/Users/lqd/projects/eslint-config/config/web-naming-rules.js)。
 
 这套配置在基础配置之上又叠加了：
 
@@ -281,7 +281,7 @@ React 配置还扩展了 `no-restricted-syntax`，新增了一条针对 `<img>` 
 
 ## 6. React Typed 配置 `@liangqingda/eslint-config/react-typed`
 
-入口文件是 [`exports/react-typed.js`](/Users/lqd/projects/eslint-config/exports/react-typed.js)，它会读取聚合层 `configs.js`；`reactTypedConfig` 的规则装配位于 [`config/react.js`](/Users/lqd/projects/eslint-config/config/react.js)，其中 Web/React 命名规则单独拆分在 [`config/web-naming-rules.js`](/Users/lqd/projects/eslint-config/config/web-naming-rules.js)。
+入口文件是 [`exports/react-typed.js`](/Users/lqd/projects/eslint-config/exports/react-typed.js)，它会直接读取 [`config/react.js`](/Users/lqd/projects/eslint-config/config/react.js)；`reactTypedConfig` 的规则装配位于该文件中，其中 Web/React 命名规则单独拆分在 [`config/web-naming-rules.js`](/Users/lqd/projects/eslint-config/config/web-naming-rules.js)。
 
 它本质上是下面两者的组合：
 

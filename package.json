@@ -16,7 +16,6 @@
   "author": "Qingda Liang",
   "license": "UNLICENSED",
   "files": [
-    "configs.js",
     "config",
     "exports"
   ],
