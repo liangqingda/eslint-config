@@ -9,7 +9,7 @@ const {
   createConstantsDirectoryConfig,
 } = require('./shared');
 const { baseConfig } = require('./base');
-const { reactNamingPlugin, reactNamingRules } = require('./web-naming-rules');
+const { webNamingPlugin, webNamingRules } = require('./web-naming-rules');
 
 const reactRestrictedSyntaxEntries = [
   ...baseRestrictedSyntaxEntries,
@@ -91,9 +91,9 @@ const reactConfig = [
   {
     name: '@liangqingda/eslint-config/react/naming',
     plugins: {
-      'liangqingda-react': reactNamingPlugin,
+      'liangqingda-react': webNamingPlugin,
     },
-    rules: reactNamingRules,
+    rules: webNamingRules,
   },
   createConstantsDirectoryConfig(
     '@liangqingda/eslint-config/react/constants',

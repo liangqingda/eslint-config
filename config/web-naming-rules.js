@@ -63,12 +63,13 @@ const namingPatternLabels = {
   usePrefixedCamelCase: 'camelCase and start with "use"',
   pascalCase: 'PascalCase',
 };
-// 对外暴露给 React 配置启用的命名规则开关集合。
-const reactNamingRules = {
+// 对外暴露给 Web 配置启用的命名规则开关集合。
+const webNamingRules = {
   'liangqingda-react/filename-naming-convention': 'error',
   'liangqingda-react/folder-naming-convention': 'error',
 };
 
+// 将 ESLint 当前处理文件转换为可用于命名判断的相对路径结构。
 const getLintTargetPathParts = (context) => {
   const { cwd, physicalFilename } = context;
 
@@ -100,6 +101,7 @@ const getLintTargetPathParts = (context) => {
   };
 };
 
+// 提取文件名中第一个 `.` 之前的主文件名，用于统一做命名检查。
 const getPrimaryFileName = (fileName) => {
   const firstDotIndex = fileName.indexOf('.');
 
@@ -110,9 +112,11 @@ const getPrimaryFileName = (fileName) => {
   return fileName.slice(0, firstDotIndex);
 };
 
+// 判断主文件名是否为 `useXxx` 形式的小驼峰命名。
 const isUsePrefixedFileBaseName = (baseName) =>
   /^use[A-Z0-9][a-zA-Z0-9]*$/.test(baseName);
 
+// 判断当前文件是否直接位于 `hooks/` 或 `store/` 目录下。
 const isInReactUsePrefixedRootFileDirectory = (directoryParts) => {
   if (!directoryParts.length) {
     return false;
@@ -123,6 +127,7 @@ const isInReactUsePrefixedRootFileDirectory = (directoryParts) => {
   );
 };
 
+// 根据整条目录路径推导当前文件最终应该继承的命名模式。
 const getExpectedReactFilePatternKeyByDirectoryParts = (directoryParts) =>
   directoryParts.reduce((expectedFilePatternKey, directoryName) => {
     if (reactKebabCaseDirectoryModeRoots.has(directoryName)) {
@@ -136,6 +141,7 @@ const getExpectedReactFilePatternKeyByDirectoryParts = (directoryParts) =>
     return expectedFilePatternKey;
   }, 'kebabCase');
 
+// 计算单个目录节点在当前位置下应该遵循的目录命名模式。
 const getExpectedReactDirectoryPatternKey = (
   directoryName,
   expectedNestedDirectoryPatternKey,
@@ -144,6 +150,7 @@ const getExpectedReactDirectoryPatternKey = (
     ? null
     : expectedNestedDirectoryPatternKey;
 
+// 进入某个目录节点后，推导其后代目录后续应切换到的命名模式。
 const getNextReactNestedDirectoryPatternKey = (
   directoryName,
   expectedNestedDirectoryPatternKey,
@@ -159,6 +166,7 @@ const getNextReactNestedDirectoryPatternKey = (
   return expectedNestedDirectoryPatternKey;
 };
 
+// 综合目录语义、扩展名与特殊保留名，计算当前文件应使用的命名模式。
 const getExpectedReactFileNamePattern = (
   baseName,
   extension,
@@ -199,7 +207,7 @@ const getExpectedReactFileNamePattern = (
 };
 
 // 自定义 ESLint 插件，实现 Web 项目的文件名与目录名校验。
-const reactNamingPlugin = {
+const webNamingPlugin = {
   rules: {
     'filename-naming-convention': {
       meta: {
@@ -316,6 +324,6 @@ const reactNamingPlugin = {
 };
 
 module.exports = {
-  reactNamingPlugin,
-  reactNamingRules,
+  webNamingPlugin,
+  webNamingRules,
 };

@@ -2,7 +2,7 @@
 
 本文专门说明 [`config/web-naming-rules.js`](/Users/lqd/projects/eslint-config/config/web-naming-rules.js) 中定义的 Web 命名规则。
 
-这个实现文件当前按“顶层命名语义常量 + 辅助判断函数 + ESLint 插件导出”的方式组织，便于集中维护目录语义与文件命名策略。
+这个实现文件当前按“顶层命名语义常量 + 顶层辅助判断函数 + ESLint 插件导出”的方式组织，且顶层 `const` 都带有职责注释，便于集中维护目录语义与文件命名策略。
 
 其中有一条单独的全局限制需要特别注意：只要主文件名使用了大驼峰命名（`PascalCase`），扩展名就只能是 `jsx`、`tsx`、`vue`。
 
