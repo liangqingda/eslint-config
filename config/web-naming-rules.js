@@ -33,6 +33,8 @@ const reactPascalCaseFileNameExceptions = new Set([
   'constants',
   'store',
 ]);
+// 任何位置下，只要文件名使用 PascalCase，就只允许搭配这些扩展名。
+const reactPascalCaseFileExtensions = new Set(['.jsx', '.tsx', '.vue']);
 // 只有直接位于这些目录下的根文件，才要求使用 useXxx 命名。
 const reactUsePrefixedFileDirectoryNames = new Set(['hooks', 'store']);
 // 参与这套命名规则检查的脚本文件扩展名集合。
@@ -162,6 +164,14 @@ const getExpectedReactFileNamePattern = (
   }
 
   if (isUsePrefixedFileBaseName(baseName)) {
+    return 'kebabCase';
+  }
+
+  if (namingPatterns.pascalCase.test(baseName)) {
+    if (reactPascalCaseFileExtensions.has(extension)) {
+      return null;
+    }
+
     return 'kebabCase';
   }
 

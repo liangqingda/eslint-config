@@ -4,6 +4,8 @@
 
 这个实现文件当前按“顶层命名语义常量 + 辅助判断函数 + ESLint 插件导出”的方式组织，便于集中维护目录语义与文件命名策略。
 
+其中有一条单独的全局限制需要特别注意：只要主文件名使用了大驼峰命名（`PascalCase`），扩展名就只能是 `jsx`、`tsx`、`vue`。
+
 当前这套命名规则主要被下面两个配置复用：
 
 - `@liangqingda/eslint-config/react`
@@ -110,11 +112,27 @@
 - `src/pages/Home/utils/UserService/fetch-user.ts` 不合法
 - `src/store/OrderCache/get-item.ts` 不合法
 
-## 6. 大驼峰根目录下的文件规则
+## 6. 全局 PascalCase 文件限制
+
+无论文件位于哪个目录，只要主文件名使用了大驼峰命名（`PascalCase`）：
+
+- 扩展名就只能是 `jsx`、`tsx`、`vue`
+
+例如：
+
+- `src/UserCard.tsx` 合法
+- `src/UserCard.jsx` 合法
+- `src/views/Home/UserCard.vue` 合法
+- `src/UserCard.ts` 不合法
+- `src/UserCard.js` 不合法
+
+这条限制是全局生效的，并不只针对 `pages`、`views`、`components`、`layouts` 目录树。
+
+## 7. 大驼峰根目录下的文件规则
 
 如果文件位于 `pages`、`views`、`components`、`layouts` 目录树内：
 
-- 文件名默认必须使用大驼峰命名（`PascalCase`）
+- 只有 `jsx`、`tsx`、`vue` 文件默认必须使用大驼峰命名（`PascalCase`）
 - 但下面这些主文件名允许直接保留当前写法：
   - `utils`
   - `index`
@@ -129,18 +147,19 @@
 - `src/pages/Home/index.tsx` 合法
 - `src/views/Home/index.vue` 合法
 - `src/pages/Home/UserCard.tsx` 合法
-- `src/pages/Home/UserCard.ts` 合法
+- `src/pages/Home/user-card.ts` 合法
 - `src/views/Home/UserCard.vue` 合法
+- `src/pages/Home/UserCard.jsx` 合法
 - `src/components/UserCard/Header.tsx` 合法
 - `src/pages/Home/utils.ts` 合法
 - `src/pages/Home/store.ts` 合法
 - `src/pages/Home/user-card.tsx` 不合法
-- `src/pages/Home/user-card.ts` 不合法
+- `src/pages/Home/UserCard.ts` 不合法
 - `src/views/Home/user-card.vue` 不合法
 
-也就是说，在这些大驼峰根目录树下，这条规则不再只针对 `tsx`、`vue` 文件，普通 `ts`、`js` 文件同样会被要求使用大驼峰命名，除非主文件名命中上述例外名单。
+也就是说，在这些大驼峰根目录树下，只有 `jsx`、`tsx`、`vue` 文件会被进一步要求使用大驼峰命名；普通 `ts`、`js` 文件仍然按各自规则校验，除非主文件名命中上述例外名单。
 
-## 7. `hooks` / `store` 根文件规则
+## 8. `hooks` / `store` 根文件规则
 
 只有直接位于下面目录下的根文件：
 
@@ -171,11 +190,12 @@
 - `useXxx` 只适用于 `hooks/`、`store/` 目录下的根文件
 - 其他位置的文件名不应该使用 `useXxx`
 
-## 8. 常见合法示例
+## 9. 常见合法示例
 
+- `src/UserCard.tsx`
 - `src/pages/Home/components/Profile/CardItem.tsx`
 - `src/views/Home/Profile.vue`
-- `src/pages/Home/Profile.ts`
+- `src/pages/Home/profile.ts`
 - `src/pages/Home/components/utils/user-service/fetch-user.ts`
 - `src/pages/Home/layouts/MainLayout/index.tsx`
 - `src/pages/Home/store.ts`
@@ -187,19 +207,20 @@
 - `src/store/order-cache/get-item.ts`
 - `src/features/order/constants/api-config.ts`
 
-## 9. 常见不合法示例
+## 10. 常见不合法示例
 
+- `src/UserCard.ts`
 - `src/pages/home/components/Profile/CardItem.tsx`
 - `src/views/home/Profile.vue`
 - `src/pages/Home/components/profile/CardItem.tsx`
-- `src/pages/Home/user-card.ts`
+- `src/pages/Home/UserCard.ts`
 - `src/pages/Home/types/UserProfile/type-guards.ts`
 - `src/pages/Home/utils/UserService/fetch-user.ts`
 - `src/hooks/test-a.ts`
 - `src/store/user.ts`
 - `src/utils/use-user.ts`
 
-## 10. 与常量命名规则的关系
+## 11. 与常量命名规则的关系
 
 `constants/`、`consts/` 在这套 Web 命名规则里有两层含义：
 
