@@ -16,6 +16,7 @@ const reactKebabCaseDirectoryModeRoots = new Set([
   'utils',
   'types',
   'hooks',
+  'store',
   'constants',
   'consts',
 ]);
@@ -23,6 +24,7 @@ const reactAlwaysAllowedDirectoryNames = new Set([
   'components',
   ...reactKebabCaseDirectoryModeRoots,
 ]);
+const reactUsePrefixedFileDirectoryNames = new Set(['hooks', 'store']);
 const supportedScriptExtensions = new Set([
   '.ts',
   '.cts',
@@ -36,13 +38,13 @@ const supportedScriptExtensions = new Set([
 const namingPatterns = {
   kebabCase: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
   camelCase: /^[a-z][a-zA-Z0-9]*$/,
-  hookCamelCase: /^use[A-Z0-9][a-zA-Z0-9]*$/,
+  usePrefixedCamelCase: /^use[A-Z0-9][a-zA-Z0-9]*$/,
   pascalCase: /^[A-Z][a-zA-Z0-9]*$/,
 };
 const namingPatternLabels = {
   kebabCase: 'kebab-case',
   camelCase: 'camelCase',
-  hookCamelCase: 'camelCase and start with "use"',
+  usePrefixedCamelCase: 'camelCase and start with "use"',
   pascalCase: 'PascalCase',
 };
 
@@ -96,10 +98,17 @@ const getPrimaryFileName = (fileName) => {
   return fileName.slice(0, firstDotIndex);
 };
 
-const isUsePrefixedHookFileBaseName = (baseName) =>
-  /^use(?:[A-Z0-9]|[-_])/.test(baseName);
+const isUsePrefixedFileBaseName = (baseName) => /^use[A-Z0-9][a-zA-Z0-9]*$/.test(baseName);
 
-const isHooksDirectoryFile = (directoryParts) => directoryParts.includes('hooks');
+const isInReactUsePrefixedRootFileDirectory = (directoryParts) => {
+  if (!directoryParts.length) {
+    return false;
+  }
+
+  return reactUsePrefixedFileDirectoryNames.has(
+    directoryParts[directoryParts.length - 1],
+  );
+};
 
 const isInReactPascalCaseDirectoryTree = (directoryParts) =>
   directoryParts.some((directoryName) =>
@@ -135,11 +144,15 @@ const getExpectedReactFileNamePattern = (
   extension,
   directoryParts,
 ) => {
-  if (
-    isUsePrefixedHookFileBaseName(baseName)
-    || isHooksDirectoryFile(directoryParts)
-  ) {
-    return 'hookCamelCase';
+  const isInUsePrefixedRootFileDirectory =
+    isInReactUsePrefixedRootFileDirectory(directoryParts);
+
+  if (isInUsePrefixedRootFileDirectory) {
+    return 'usePrefixedCamelCase';
+  }
+
+  if (isUsePrefixedFileBaseName(baseName)) {
+    return 'kebabCase';
   }
 
   if (extension === '.tsx') {
