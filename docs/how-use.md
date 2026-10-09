@@ -67,9 +67,10 @@ module.exports = [...reactConfig];
 - React 版本使用 `detect` 自动识别，不需要手动指定版本。
 - 样式文件导入如 `*.css`、`*.less`、`*.scss` 会参与导入顺序校验。
 - JSX 中对 `<img src={...}>` 有额外限制，推荐先 `import` 资源，再传给 `src`。
+- 所有导出配置都会要求源码文件在结尾保留且只保留一个空行。
 - `react` 和 `react-typed` 额外带有一套面向 Web / React 项目的命名规则，包括目录语义切换、`tsx` 组件命名、`hooks/` 与 `store/` 根文件命名等；完整说明见 [Web 命名规则](/Users/lqd/projects/eslint-config/docs/web-naming-rules.md)。
 - 所有 TypeScript 相关配置都会校验 `enum` 名称必须使用 `PascalCase`，并且以 `Enum` 结尾，例如 `GroupEnum`、`NameEnum`。
-- 任意配置下，只要文件位于 `constants/` 或 `consts/` 目录中，非函数值的 `const` 变量都必须使用全大写下划线命名，例如 `const API_URL = '...'`；`const fn = () => {}`、`function fn() {}`、`let localValue = 1` 不受这条规则影响。
+- 任意配置下，只要文件位于 `constants/` 或 `consts/` 目录中，或文件名本身就是 `constants.ts` / `consts.ts`，非函数值的 `const` 变量都必须使用全大写下划线命名，例如 `const API_URL = '...'`；`const fn = () => {}`、`function fn() {}`、`let localValue = 1` 不受这条规则影响。
 
 ## Node.js 后端项目
 

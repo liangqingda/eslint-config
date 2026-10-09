@@ -44,6 +44,7 @@
 - 强制单引号：`quotes: ["error", "single"]`
 - 强制使用严格相等：`eqeqeq`
 - 强制使用花括号：`curly`
+- 强制文件结尾保留换行：`eol-last`
 - 限制多余空行：`no-multiple-empty-lines`
 - 强制对象花括号空格：`object-curly-spacing`
 - 强制关键字和运算符空格：`keyword-spacing`、`space-infix-ops`
@@ -57,6 +58,7 @@
 - `arrow-body-style`、`prefer-arrow-callback`：偏向箭头函数风格
 - `padding-line-between-statements`：变量声明、导出语句，以及 `if` / `function` / `for` / `const fn = () => {}` 这类 block-like 语句前后必须保留空行
 - `padded-blocks`：关闭代码块内部强制空行，改为只约束块外空行
+- 文件结尾必须保留且只保留一个空行；如果文件末尾没有换行，或连续保留多个结尾空行，都会报错
 
 ### 1.4 对某些语法和写法的限制
 

@@ -33,6 +33,7 @@ const baseRestrictedSyntaxEntries = [
 
 const constantsDirectoryFiles = [
   '**/{constants,consts}/**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}',
+  '**/{constants,consts}.{js,jsx,mjs,cjs,ts,tsx,mts,cts}',
 ];
 
 const createRestrictedSyntaxRule = (entries) => ['error', ...entries];
@@ -70,7 +71,7 @@ const createConstantsDirectoryConfig = (name, restrictedSyntaxEntries) => ({
         selector:
           "VariableDeclaration[kind='const'] > VariableDeclarator[id.type='Identifier'][id.name!=/^[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*$/][init.type!='ArrowFunctionExpression'][init.type!='FunctionExpression']",
         message:
-          'Const variables in constants/ or consts/ files must use UPPER_CASE unless the initializer is a function.',
+          'Const variables in constants/consts directories or files must use UPPER_CASE unless the initializer is a function.',
       },
     ]),
   },
