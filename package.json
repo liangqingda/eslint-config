@@ -16,6 +16,7 @@
   "author": "Qingda Liang",
   "license": "UNLICENSED",
   "files": [
+    "bin",
     "config",
     "exports"
   ],
@@ -40,5 +41,8 @@
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
+  },
+  "bin": {
+    "liangqingda-check-scss": "./bin/check-scss.mjs"
   }
 }

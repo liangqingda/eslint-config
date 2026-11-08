@@ -332,3 +332,9 @@ React 配置还扩展了 `no-restricted-syntax`，新增了一条针对 `<img>` 
 - Node.js + TypeScript + ESM 项目：使用 `@liangqingda/eslint-config/node-typed`
 - React + JavaScript 项目：使用 `@liangqingda/eslint-config/react`
 - React + TypeScript 项目，需要类型感知规则：使用 `@liangqingda/eslint-config/react-typed`
+
+## 附加能力
+
+除 ESLint / Prettier 配置外，包内还带一个零依赖 CLI `liangqingda-check-scss`，负责
+ESLint 管不到的样式文件排版：块间空行、选择器列表被空行截断、连续空行、行尾空格、
+文件末尾换行。详见 [SCSS 排版检查](./scss-check.md)。

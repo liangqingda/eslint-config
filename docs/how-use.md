@@ -152,3 +152,23 @@ module.exports = require('@liangqingda/eslint-config/prettier.json');
 - 使用方项目需要通过 `eslint.config.js`、`eslint.config.cjs` 或 `eslint.config.mjs` 接入。
 - `typed`、`node-typed` 和 `react-typed` 都依赖 TypeScript 工程信息，首次接入旧项目时通常会比基础配置报出更多问题。
 - 当前规则整体偏严格，包含导入顺序、不可变写法、空行风格、React 组件写法等约束，建议旧项目分批修复。
+
+## 样式排版检查（可选）
+
+包内自带零依赖 CLI，用来校验 `SCSS` 的块间空行、选择器列表、行尾空格等排版：
+
+```bash
+liangqingda-check-scss src
+```
+
+接到 lint 脚本里即可，无需额外装依赖：
+
+```json
+{
+  "scripts": {
+    "lint": "eslint . && liangqingda-check-scss src"
+  }
+}
+```
+
+完整检查项与边界见 [SCSS 排版检查](./scss-check.md)。
