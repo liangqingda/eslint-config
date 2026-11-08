@@ -37,10 +37,11 @@ const reactRules = {
           position: 'after',
         },
         {
-          // 路径分组按顺序匹配，页面侧要写在 `@/**` 前面才会被单独归组：
-          // 有 `src/pages` 的项目里页面代码排在公共 @/ 之后，没有该目录的项目不受影响
+          // 页面代码（@/pages/**）在 internal 组内排在公共 @/ 之后；
+          // 用 internal + position: after 而不是单独 group，避免和 ../ 就近引用撞组
           pattern: '@/pages/**',
-          group: 'parent',
+          group: 'internal',
+          position: 'after',
         },
         {
           pattern: '@/**',
@@ -50,9 +51,10 @@ const reactRules = {
       groups: [
         'builtin',
         'external',
-        'type',
         'internal',
-        ['parent', 'sibling', 'index'],
+        'parent',
+        'sibling',
+        'index',
         'object',
       ],
       distinctGroup: true,

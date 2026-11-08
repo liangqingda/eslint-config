@@ -124,6 +124,8 @@ const baseRules = {
     'error',
     {
       'newlines-between': 'always',
+      // type 不再单独成组：类型 import 跟着来源路径走（外部的归 external、
+      // @/ 的归 internal、就近的归 parent/sibling），就近引用内部再按 ../ 和 ./ 拆块
       pathGroups: [
         {
           pattern: '@/**',
@@ -133,11 +135,16 @@ const baseRules = {
       groups: [
         'builtin',
         'external',
-        'type',
         'internal',
-        ['parent', 'sibling', 'index'],
+        'parent',
+        'sibling',
+        'index',
         'object',
       ],
+      distinctGroup: true,
+      named: false,
+      sortTypesGroup: false,
+      warnOnUnassignedImports: false,
     },
   ],
   'import/no-dynamic-require': 'error',
