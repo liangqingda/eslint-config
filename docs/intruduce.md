@@ -125,10 +125,10 @@ let localValue = 1; // 允许
 
 - `import/first`：`import` 必须放在顶部
 - `import/newline-after-import`：导入后必须空一行
-- `import/order`：按 `builtin`、`external`、`type`、`internal`、相对路径分组
+- `import/order`：按 `builtin`、`external`、`internal`（`@/`）、`parent`（`../`）、`sibling`（`./`）、`index`、`object` 分组
 - `@/**` 会被视为 `internal`
-- `type` 组独立存在（`distinctGroup: true`），相对路径的 `import type` 会单独成组并排在 `internal` 之前；`sortTypesGroup: false` 表示类型组内部的相对顺序不作为报错项
-- `newlines-between: always` 要求不同分组之间空一行，同组内部不允许出现空行
+- `type` 不再单独成组：类型 import 跟着来源路径走（外部的归 external、`@/` 的归 internal、就近的归 parent/sibling），这样 `import type { T } from './types'` 会和同目录的值 import 在一起，而不是被提到文件顶部
+- 就近引用内部再拆块：`../`（parent）一组、`./`（sibling）一组，组间空一行；`newlines-between: always` 要求不同分组之间空一行，同组内部不允许出现空行
 - 启用了 `import/export`
 - 启用了 `import/no-useless-path-segments`
 
@@ -276,9 +276,9 @@ React 配置中增加或强化了下面这些规则：
 
 - `*.less`、`*.css`、`*.scss` 会被视为相对导入，并排在后面
 - `@/**` 仍然被视为内部模块
-- `@/pages/**` 被单独判为 `parent` 组，用于「第三方 → 类型 → 公共 `@/` → 页面 → 就近相对路径」这种
-  前端项目常见的四段式分层；没有 `src/pages` 目录的项目不会命中该 pattern，行为不变
-- 路径分组按顺序匹配，所以 `@/pages/**` 必须写在 `@/**` 前面，否则会被后者先吃掉、落回 `internal`
+- `@/pages/**` 判为 `internal` 且 `position: after`，即页面代码在公共 `@/` 块内排在最后、
+  与公共 `@/` 之间空一行；没有 `src/pages` 目录的项目不会命中该 pattern，行为不变
+- 就近引用按距离拆块：`../` 一组、`./` 一组（含样式），组间空行
 
 这套分组只是「机器可判」的部分。拆分维度、性能反模式、注释语义这类需要判断的约定，不在 ESLint 里，
 统一写在 `best-react-code` skill 中；项目特有的布局/弹窗契约留在各项目自己的 `AGENTS.md`。
