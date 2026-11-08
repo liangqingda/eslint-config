@@ -85,6 +85,7 @@
 - 要求重载签名相邻：`@typescript-eslint/adjacent-overload-signatures`
 - 禁止显式写出可推断类型：`@typescript-eslint/no-inferrable-types`
 - 限制方法签名风格：`@typescript-eslint/method-signature-style`
+- 类型导入必须独立成句：`@typescript-eslint/consistent-type-imports`（`prefer: type-imports`、`fixStyle: separate-type-imports`），即从同一个模块同时取值和取类型时，要拆成 `import { x } from 'm'` 与 `import type { T } from 'm'` 两句，`--fix` 会自动拆
 
 其中未使用变量规则还做了约定：
 
@@ -126,6 +127,8 @@ let localValue = 1; // 允许
 - `import/newline-after-import`：导入后必须空一行
 - `import/order`：按 `builtin`、`external`、`type`、`internal`、相对路径分组
 - `@/**` 会被视为 `internal`
+- `type` 组独立存在（`distinctGroup: true`），相对路径的 `import type` 会单独成组并排在 `internal` 之前；`sortTypesGroup: false` 表示类型组内部的相对顺序不作为报错项
+- `newlines-between: always` 要求不同分组之间空一行，同组内部不允许出现空行
 - 启用了 `import/export`
 - 启用了 `import/no-useless-path-segments`
 
@@ -264,7 +267,7 @@ React 配置中增加或强化了下面这些规则：
 
 除了 React 插件本身，这套配置还追加了一些偏 React 场景的约束：
 
-- `max-lines` 限制单文件最多 490 行，注释不计入
+- `max-lines` 限制单文件最多 300 行，注释不计入（超了就按职责拆，别靠注释凑数）
 - `arrow-parens` 要求箭头函数参数始终带括号
 - `import/no-duplicates` 开启
 - React 项目额外带有一套 Web 命名规则，覆盖目录语义、`tsx` 组件文件、`hooks/` 与 `store/` 根文件等场景；完整说明见 [Web 命名规则](/Users/lqd/projects/eslint-config/docs/web-naming-rules.md)
@@ -273,6 +276,12 @@ React 配置中增加或强化了下面这些规则：
 
 - `*.less`、`*.css`、`*.scss` 会被视为相对导入，并排在后面
 - `@/**` 仍然被视为内部模块
+- `@/pages/**` 被单独判为 `parent` 组，用于「第三方 → 类型 → 公共 `@/` → 页面 → 就近相对路径」这种
+  前端项目常见的四段式分层；没有 `src/pages` 目录的项目不会命中该 pattern，行为不变
+- 路径分组按顺序匹配，所以 `@/pages/**` 必须写在 `@/**` 前面，否则会被后者先吃掉、落回 `internal`
+
+这套分组只是「机器可判」的部分。拆分维度、性能反模式、注释语义这类需要判断的约定，不在 ESLint 里，
+统一写在 `best-react-code` skill 中；项目特有的布局/弹窗契约留在各项目自己的 `AGENTS.md`。
 
 ### 5.3 JSX 中的特殊限制
 

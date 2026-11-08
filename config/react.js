@@ -21,7 +21,8 @@ const reactRestrictedSyntaxEntries = [
 ];
 
 const reactRules = {
-  'max-lines': ['error', { max: 490, skipComments: true }],
+  // 490 行挡不住「一个文件塞多个职责」，收到 300（注释不计）
+  'max-lines': ['error', { max: 300, skipComments: true }],
   'space-before-function-paren': 'off',
   'arrow-parens': ['error', 'always'],
   'import/order': [
@@ -36,6 +37,12 @@ const reactRules = {
           position: 'after',
         },
         {
+          // 路径分组按顺序匹配，页面侧要写在 `@/**` 前面才会被单独归组：
+          // 有 `src/pages` 的项目里页面代码排在公共 @/ 之后，没有该目录的项目不受影响
+          pattern: '@/pages/**',
+          group: 'parent',
+        },
+        {
           pattern: '@/**',
           group: 'internal',
         },
@@ -48,6 +55,10 @@ const reactRules = {
         ['parent', 'sibling', 'index'],
         'object',
       ],
+      distinctGroup: true,
+      named: false,
+      sortTypesGroup: false,
+      warnOnUnassignedImports: false,
     },
   ],
   'import/no-duplicates': 'error',

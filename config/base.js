@@ -108,6 +108,14 @@ const baseRules = {
       suffix: ['Enum'],
     },
   ],
+  '@typescript-eslint/consistent-type-imports': [
+    'error',
+    {
+      // 值导入里不要内联 type：类型单独 `import type`，运行时导入保持干净
+      fixStyle: 'separate-type-imports',
+      prefer: 'type-imports',
+    },
+  ],
   '@typescript-eslint/no-explicit-any': 'error',
   '@typescript-eslint/adjacent-overload-signatures': 'error',
   '@typescript-eslint/no-inferrable-types': 'error',
