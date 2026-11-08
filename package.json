@@ -1,6 +1,6 @@
 {
   "name": "@liangqingda/eslint-config",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "main": "exports/index.js",
   "exports": {
     ".": "./exports/index.js",
@@ -22,6 +22,7 @@
   ],
   "private": false,
   "dependencies": {
+    "@eslint-community/eslint-plugin-eslint-comments": "^4.8.1",
     "@eslint/js": "^9.39.4",
     "@typescript-eslint/eslint-plugin": "^8.59.3",
     "@typescript-eslint/parser": "^8.59.3",

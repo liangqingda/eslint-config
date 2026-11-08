@@ -147,6 +147,26 @@ let localValue = 1; // 允许
 
 如果确实需要这些含义，建议定义同名的局部变量替代全局访问。
 
+### 1.8 禁用注释与类型逃逸
+
+「lint 全绿」只有在没被注释绕过去时才成立，所以基础配置把禁用注释本身也纳入了约束：
+
+- `@typescript-eslint/ban-ts-comment`：`@ts-ignore` / `@ts-nocheck` 直接禁止；`@ts-expect-error` 必须带理由（≥3 字符）
+- `eslint-comments/require-description`：`eslint-disable*` 必须写理由，理由是注释末尾的 `-- 理由`
+- `eslint-comments/no-unlimited-disable`：不允许 `/* eslint-disable */` 这种不带规则名的一次性全关
+- `eslint-comments/disable-enable-pair`、`eslint-comments/no-duplicate-disable`：`disable` 必须成对 `enable`，同一条规则不能重复禁用
+- `linterOptions.reportUnusedDisableDirectives: 'error'`：规则改掉或移除后留下的失效 `eslint-disable` 直接报错（原生 ESLint 能力，不依赖插件）
+
+```js
+// 允许：写清理由
+// eslint-disable-next-line no-console -- 排查启动问题，定位后删除
+console.log('boot');
+
+// 不允许：裸禁用，等于绕过检查
+// eslint-disable-next-line no-console
+console.log('boot');
+```
+
 ## 2. 类型检查配置 `@liangqingda/eslint-config/typed`
 
 入口文件是 [`exports/typed.js`](/Users/lqd/projects/eslint-config/exports/typed.js)，它会直接读取 [`config/typed.js`](/Users/lqd/projects/eslint-config/config/typed.js) 并导出其中的 `typedConfig`。

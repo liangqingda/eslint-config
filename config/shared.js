@@ -2,6 +2,7 @@ const js = require('@eslint/js');
 const tsEslint = require('@typescript-eslint/eslint-plugin');
 const importPlugin = require('eslint-plugin-import');
 const noSecretsPlugin = require('eslint-plugin-no-secrets');
+const eslintCommentsPlugin = require('@eslint-community/eslint-plugin-eslint-comments');
 const prettierConfig = require('eslint-config-prettier');
 
 const importExtensions = [
@@ -82,6 +83,7 @@ module.exports = {
   tsEslint,
   importPlugin,
   noSecretsPlugin,
+  eslintCommentsPlugin,
   prettierConfig,
   baseSettings,
   baseRestrictedSyntaxEntries,

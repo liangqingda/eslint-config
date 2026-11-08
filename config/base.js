@@ -3,6 +3,7 @@ const {
   tsEslint,
   importPlugin,
   noSecretsPlugin,
+  eslintCommentsPlugin,
   prettierConfig,
   baseSettings,
   baseRestrictedSyntaxEntries,
@@ -117,6 +118,24 @@ const baseRules = {
     },
   ],
   '@typescript-eslint/no-explicit-any': 'error',
+  // 裸 @ts-ignore / @ts-nocheck 等于静默关掉类型检查，必须有理由；expect-error 也一样
+  '@typescript-eslint/ban-ts-comment': [
+    'error',
+    {
+      'ts-expect-error': 'allow-with-description',
+      'ts-ignore': true,
+      'ts-nocheck': true,
+      minimumDescriptionLength: 3,
+    },
+  ],
+  // 禁用某条规则必须写清理由，否则「lint 全绿」是假的
+  'eslint-comments/require-description': 'error',
+  // 允许一次性关掉全部规则必须写明是哪些规则
+  'eslint-comments/no-unlimited-disable': 'error',
+  'eslint-comments/disable-enable-pair': 'error',
+  'eslint-comments/no-duplicate-disable': 'error',
+  // 失效的 disable 交给 linterOptions.reportUnusedDisableDirectives 统一报，避免两处重复
+  'eslint-comments/no-unused-disable': 'off',
   '@typescript-eslint/adjacent-overload-signatures': 'error',
   '@typescript-eslint/no-inferrable-types': 'error',
   '@typescript-eslint/method-signature-style': 'error',
@@ -181,6 +200,11 @@ const baseConfig = [
     name: '@liangqingda/eslint-config/base',
     plugins: {
       'no-secrets': noSecretsPlugin,
+      'eslint-comments': eslintCommentsPlugin,
+    },
+    // 规则已经改掉 / 移除后留下的 eslint-disable 注释本身就是残留，失效即报错
+    linterOptions: {
+      reportUnusedDisableDirectives: 'error',
     },
     languageOptions: {
       ecmaVersion: 'latest',
