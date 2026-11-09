@@ -12,6 +12,12 @@
  *
  * 注释块内部不参与判断（文档注释里出现 `}` 或 `,` 属正常写法）。
  *
+ * 除了排版，还查一类「每次 review 都靠人眼、却完全可以写成代码」的类名约定：
+ *  4. 类名只能用 ASCII 字母 / 数字 / 连字符，不能以数字或连字符开头（中文类名、空格类名直接拦）。
+ *  5. 类名不用下划线（含 BEM 的 `__` / `--` 后缀写法），统一走 camelCase 或 kebab-case。
+ *  6. 同一个文件内不许混用 camelCase 与 kebab-case，一种项目风格写到底。
+ * 类名「是否表达用途」这类语义判断不在这里，留给 review。
+ *
  * 用法：
  *   liangqingda-check-scss            # 默认检查当前目录下的 src
  *   liangqingda-check-scss src app   # 检查多个目录
@@ -106,6 +112,73 @@ const opensBlock = (text) => text.endsWith('{');
 /** 判断一行是否结束一个块 */
 const closesBlock = (text) => text === '}' || text.endsWith('}');
 
+/** 类名 token：`.foo` / `.foo-bar` / `.fooBar`，非 ASCII 也先抓进来再判非法 */
+const CLASS_TOKEN = /\.([A-Za-z0-9_\-\u00a0-\uffff]+)/gu;
+
+/** 非 ASCII（中文、全角符号等） */
+const NON_ASCII = /[^\x20-\x7e]/u;
+
+/**
+ * 取一行里的选择器部分（`{` 之前）。声明行、at-rule 行返回空串——
+ * 排版检查关心整行，类名检查只关心真正的选择器。
+ */
+function selectorOf(text) {
+  if (!opensBlock(text)) return '';
+
+  const head = text.slice(0, text.lastIndexOf('{')).trim();
+
+  if (head === '' || head.startsWith('@')) return '';
+
+  return head;
+}
+
+/** 抽出选择器里的所有类名；跳过 `0.5rem` 这种小数点的 `.5` */
+function classNamesIn(selector) {
+  const names = [];
+
+  for (const match of selector.matchAll(CLASS_TOKEN)) {
+    const before = selector[match.index - 1];
+
+    if (before && /[A-Za-z0-9_-]/u.test(before)) continue;
+
+    names.push(match[1]);
+  }
+
+  return names;
+}
+
+/** 类名书写风格；`plain` 是单个小写单词，两种风格都兼容 */
+function classStyle(name) {
+  const hasDash = name.includes('-');
+  const hasUpper = /[A-Z]/u.test(name);
+
+  if (hasDash && hasUpper) return 'mixed';
+  if (hasDash) return 'kebab';
+  if (hasUpper) return 'camel';
+
+  return 'plain';
+}
+
+function checkClassName(rel, line, name) {
+  if (NON_ASCII.test(name)) {
+    errors.push(`${rel}:${line} 类名 ".${name}" 含非 ASCII 字符（中文 / 全角符号），换成英文`);
+
+    return;
+  }
+
+  if (/^[0-9-]/u.test(name)) {
+    errors.push(`${rel}:${line} 类名 ".${name}" 不能以数字或连字符开头`);
+  }
+
+  if (name.includes('_')) {
+    errors.push(`${rel}:${line} 类名 ".${name}" 用了下划线，统一写 camelCase 或 kebab-case`);
+  }
+
+  if (classStyle(name) === 'mixed') {
+    errors.push(`${rel}:${line} 类名 ".${name}" 同时有连字符与大写字母，选一种风格`);
+  }
+}
+
 function checkFile(file) {
   const rel = path.relative(ROOT, file).split(path.sep).join('/');
   const source = readFileSync(file, 'utf8');
@@ -125,6 +198,7 @@ function checkFile(file) {
   });
 
   const lines = toCodeLines(source);
+  const styles = new Map(); // 风格 → 首个出现的类名，用于报错举例
 
   for (let index = 0; index < lines.length; index += 1) {
     const current = lines[index];
@@ -147,6 +221,16 @@ function checkFile(file) {
       continue;
     }
 
+    const selector = selectorOf(current.text);
+
+    for (const name of classNamesIn(selector)) {
+      checkClassName(rel, current.line, name);
+
+      const style = classStyle(name);
+
+      if (style !== 'plain' && !styles.has(style)) styles.set(style, name);
+    }
+
     const next = lines[index + 1];
 
     if (!next || next.isBlank) continue;
@@ -157,6 +241,12 @@ function checkFile(file) {
         `${rel}:${current.line} 块间缺少空行（"${current.text}" 与第 ${next.line} 行的 "${next.text}" 之间要空一行）`,
       );
     }
+  }
+
+  if (styles.has('kebab') && styles.has('camel')) {
+    errors.push(
+      `${rel}: 同一个文件里混用 kebab-case（.${styles.get('kebab')}）与 camelCase（.${styles.get('camel')}），统一成一种写法`,
+    );
   }
 }
 
@@ -173,5 +263,5 @@ if (errors.length > 0) {
 }
 
 console.log(
-  `[✓] SCSS 排版检查通过：${files.length} 个样式文件块间均有空行`,
+  `[✓] SCSS 检查通过：${files.length} 个样式文件排版与类名均合规`,
 );

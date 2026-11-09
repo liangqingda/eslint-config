@@ -1,6 +1,6 @@
 {
   "name": "@liangqingda/eslint-config",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "main": "exports/index.js",
   "exports": {
     ".": "./exports/index.js",
@@ -45,5 +45,8 @@
   },
   "bin": {
     "liangqingda-check-scss": "./bin/check-scss.mjs"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs"
   }
 }
