@@ -17,6 +17,26 @@ const reactKebabCaseDirectoryModeRoots = new Set([
   'constants',
   'consts',
 ]);
+// 允许在大驼峰目录树里、直接挂在 `components/` 下的一层分类分组目录使用中划线命名
+// （例如 `src/components/modals/FreeModal/index.tsx`）：这一层只做分组，
+// 进入之后后代目录仍回到大驼峰，组件目录本身依旧是 PascalCase。
+// 名单固定而不是「components 下任意小写目录」，否则 `components/free-modal/index.tsx`
+// 这类漏写大驼峰的组件目录会被一并放过；需要新分类时在这里补一个名字。
+const reactComponentGroupDirectoryModeRoot = 'components';
+const reactComponentGroupDirectoryNames = new Set([
+  'buttons',
+  'cards',
+  'feedback',
+  'fields',
+  'inputs',
+  'layouts',
+  'modals',
+  'navigation',
+  'panels',
+  'tables',
+  'texts',
+  'toggles',
+]);
 // 这些目录名本身在任何位置都允许直接使用固定的小写写法。
 const reactAlwaysAllowedDirectoryNames = new Set([
   'components',
@@ -166,6 +186,12 @@ const getNextReactNestedDirectoryPatternKey = (
   return expectedNestedDirectoryPatternKey;
 };
 
+// 判断某个目录节点是不是「直接挂在 components/ 下的分类分组目录」（modals、buttons…）。
+const isReactComponentGroupDirectory = (directoryParts, index) =>
+  index > 0 &&
+  directoryParts[index - 1] === reactComponentGroupDirectoryModeRoot &&
+  reactComponentGroupDirectoryNames.has(directoryParts[index]);
+
 // 综合目录语义、扩展名与特殊保留名，计算当前文件应使用的命名模式。
 const getExpectedReactFileNamePattern = (
   baseName,
@@ -297,6 +323,7 @@ const webNamingPlugin = {
 
               if (
                 expectedPatternKey &&
+                !isReactComponentGroupDirectory(directoryParts, index) &&
                 !namingPatterns[expectedPatternKey].test(directoryName)
               ) {
                 context.report({

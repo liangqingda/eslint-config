@@ -1,6 +1,6 @@
 {
   "name": "@liangqingda/eslint-config",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "main": "exports/index.js",
   "exports": {
     ".": "./exports/index.js",

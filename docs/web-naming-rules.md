@@ -90,6 +90,36 @@
 
 需要注意的是，这里说的是“后代目录默认要求 `PascalCase`”。如果后续又进入了 `utils`、`types`、`hooks`、`store`、`constants`、`consts`，则会切换到另一套目录规则，见下一节。
 
+### 4.1 `components/` 下一层的分类分组目录
+
+`components/` 下**直接一层**的目录，如果名字命中固定的分类名单，允许写成小写（`1.8.0` 起）：
+
+- `buttons`
+- `cards`
+- `feedback`
+- `fields`
+- `inputs`
+- `layouts`
+- `modals`
+- `navigation`
+- `panels`
+- `tables`
+- `texts`
+- `toggles`
+
+这一层只做“分类存放”（`src/components/modals/FreeModal`），进入之后**后代目录仍要求 `PascalCase`**，
+组件目录本身没有例外：
+
+- `src/components/modals/FreeModal/index.tsx` 合法
+- `src/components/tables/FreeTable/index.tsx` 合法
+- `src/components/modals/free-modal/index.tsx` 不合法（分类目录下的组件目录仍要 `PascalCase`）
+- `src/components/free-modal/index.tsx` 不合法（不在分类名单里的小写目录，仍算漏写大驼峰）
+
+判定只看“父目录名是不是 `components`”，所以页面自己的 `src/pages/Home/components/modals/...` 同样适用。
+名单是固定的：需要新增分类（例如 `charts`）时，要同时补 `config/web-naming-rules.js` 里的
+`reactComponentGroupDirectoryNames` 和本文档，否则小写目录会被判为不合法。
+
+
 ## 5. `utils` / `types` / `hooks` / `store` / `constants` / `consts` 目录树
 
 当路径进入下面任意目录后：
