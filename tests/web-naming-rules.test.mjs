@@ -56,6 +56,7 @@ function assertInvalid(relativePath, ruleId) {
 test('components 下的分类分组目录允许小写', () => {
   assertValid('src/components/modals/FreeModal/index.tsx');
   assertValid('src/components/fields/FreeSelectField/utils/a-b.ts');
+  assertValid('src/components/file-preview/FreeVideo/index.tsx');
   assertValid('src/components/tables/FreeTable/index.tsx');
 });
 

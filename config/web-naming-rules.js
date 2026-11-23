@@ -28,6 +28,7 @@ const reactComponentGroupDirectoryNames = new Set([
   'cards',
   'feedback',
   'fields',
+  'file-preview',
   'inputs',
   'layouts',
   'modals',

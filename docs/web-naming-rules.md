@@ -98,6 +98,7 @@
 - `cards`
 - `feedback`
 - `fields`
+- `file-preview`
 - `inputs`
 - `layouts`
 - `modals`
